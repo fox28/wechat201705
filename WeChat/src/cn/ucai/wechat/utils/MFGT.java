@@ -5,7 +5,9 @@ import android.content.Intent;
 
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.ui.GuideActivity;
+import cn.ucai.wechat.ui.LoginActivity;
 import cn.ucai.wechat.ui.MainActivity;
+import cn.ucai.wechat.ui.RegisterActivity;
 
 /**
  * Created by apple on 2017/5/23.
@@ -42,12 +44,12 @@ public class MFGT {
     public static void gotoGuide(Activity activity) {
         startActivity(activity, GuideActivity.class);
     }
-//
-//    public static void gotoLoginActivity(Activity activity) {
-//        startActivity(activity, LoginActivity.class);
-//    }
-//
-//    public static void gotoRegisterActivity(Activity activity) {
-//        startActivity(activity, RegisterActivity.class);
-//    }
+
+    public static void gotoLoginActivity(Activity activity) {
+        startActivity(activity, LoginActivity.class);
+    }
+
+    public static void gotoRegisterActivity(Activity activity) {
+        startActivity(activity, RegisterActivity.class);
+    }
 }
