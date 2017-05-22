@@ -82,5 +82,5 @@ dependencies {
     //    compile ('com.anthonycr.grant:permissions:1.0'){
     //        exclude module: 'support-v4'
     //    }
-    compile 'com.android.support:appcompat-v7:25.0.3'
+    compile 'com.android.support:appcompat-v7:25.3.1'
 }
