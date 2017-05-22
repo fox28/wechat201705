@@ -28,10 +28,10 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 
-public class DemoApplication extends Application {
+public class WeChatApplication extends Application {
 
 	public static Context applicationContext;
-	private static DemoApplication instance;
+	private static WeChatApplication instance;
 	// login user name
 	public final String PREF_USERNAME = "username";
 	
@@ -48,7 +48,7 @@ public class DemoApplication extends Application {
         instance = this;
         
         //init demo helper
-        DemoHelper.getInstance().init(applicationContext);
+        WeChatHelper.getInstance().init(applicationContext);
 		//red packet code : 初始化红包SDK，开启日志输出开关
 		RedPacket.getInstance().initRedPacket(applicationContext, RPConstant.AUTH_METHOD_EASEMOB, new RPInitRedPacketCallback() {
 
@@ -84,7 +84,7 @@ public class DemoApplication extends Application {
 		//end of red packet code
 	}
 
-	public static DemoApplication getInstance() {
+	public static WeChatApplication getInstance() {
 		return instance;
 	}
 

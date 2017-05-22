@@ -45,7 +45,7 @@ public class InviteMessgeDao {
 	 * @return  return cursor of the message
 	 */
 	public Integer saveMessage(InviteMessage message){
-		return DemoDBManager.getInstance().saveMessage(message);
+		return WeChatDBManager.getInstance().saveMessage(message);
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class InviteMessgeDao {
 	 * @param values
 	 */
 	public void updateMessage(int msgId,ContentValues values){
-	    DemoDBManager.getInstance().updateMessage(msgId, values);
+	    WeChatDBManager.getInstance().updateMessage(msgId, values);
 	}
 	
 	/**
@@ -62,18 +62,18 @@ public class InviteMessgeDao {
 	 * @return
 	 */
 	public List<InviteMessage> getMessagesList(){
-		return DemoDBManager.getInstance().getMessagesList();
+		return WeChatDBManager.getInstance().getMessagesList();
 	}
 	
 	public void deleteMessage(String from){
-	    DemoDBManager.getInstance().deleteMessage(from);
+	    WeChatDBManager.getInstance().deleteMessage(from);
 	}
 	
 	public int getUnreadMessagesCount(){
-	    return DemoDBManager.getInstance().getUnreadNotifyCount();
+	    return WeChatDBManager.getInstance().getUnreadNotifyCount();
 	}
 	
 	public void saveUnreadMessageCount(int count){
-	    DemoDBManager.getInstance().setUnreadNotifyCount(count);
+	    WeChatDBManager.getInstance().setUnreadNotifyCount(count);
 	}
 }

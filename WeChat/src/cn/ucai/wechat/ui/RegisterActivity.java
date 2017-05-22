@@ -15,8 +15,9 @@ package cn.ucai.wechat.ui;
 
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
-import cn.ucai.wechat.DemoHelper;
+import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.R;
+
 import com.hyphenate.exceptions.HyphenateException;
 
 import android.app.ProgressDialog;
@@ -80,7 +81,7 @@ public class RegisterActivity extends BaseActivity {
 								if (!RegisterActivity.this.isFinishing())
 									pd.dismiss();
 								// save current user
-								DemoHelper.getInstance().setCurrentUserName(username);
+								WeChatHelper.getInstance().setCurrentUserName(username);
 								Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registered_successfully), Toast.LENGTH_SHORT).show();
 								finish();
 							}

@@ -38,8 +38,8 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import cn.ucai.wechat.Constant;
-import cn.ucai.wechat.DemoHelper;
-import cn.ucai.wechat.DemoModel;
+import cn.ucai.wechat.WeChatHelper;
+import cn.ucai.wechat.WeChatModel;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.utils.PreferenceManager;
 import com.hyphenate.easeui.widget.EaseSwitchButton;
@@ -118,7 +118,7 @@ public class SettingsFragment extends Fragment implements OnClickListener {
     private EaseSwitchButton switch_adaptive_video_encode;
 	private EaseSwitchButton customServerSwitch;
 	private EaseSwitchButton customAppkeySwitch;
-    private DemoModel settingsModel;
+    private WeChatModel settingsModel;
     private EMOptions chatOptions;
 	private EditText edit_custom_appkey;
 	
@@ -173,7 +173,7 @@ public class SettingsFragment extends Fragment implements OnClickListener {
 		pushNick=(LinearLayout) getView().findViewById(R.id.ll_set_push_nick);
 		edit_custom_appkey = (EditText) getView().findViewById(R.id.edit_custom_appkey);
 
-		settingsModel = DemoHelper.getInstance().getModel();
+		settingsModel = WeChatHelper.getInstance().getModel();
 		chatOptions = EMClient.getInstance().getOptions();
 		
 		blacklistContainer.setOnClickListener(this);
@@ -439,7 +439,7 @@ public class SettingsFragment extends Fragment implements OnClickListener {
 		pd.setMessage(st);
 		pd.setCanceledOnTouchOutside(false);
 		pd.show();
-		DemoHelper.getInstance().logout(false,new EMCallBack() {
+		WeChatHelper.getInstance().logout(false,new EMCallBack() {
 			
 			@Override
 			public void onSuccess() {

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import cn.ucai.wechat.Constant;
-import cn.ucai.wechat.DemoApplication;
+import cn.ucai.wechat.WeChatApplication;
 import cn.ucai.wechat.domain.InviteMessage;
 import cn.ucai.wechat.domain.RobotUser;
 import com.hyphenate.easeui.domain.EaseUser;
@@ -19,17 +19,17 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-public class DemoDBManager {
-    static private DemoDBManager dbMgr = new DemoDBManager();
+public class WeChatDBManager {
+    static private WeChatDBManager dbMgr = new WeChatDBManager();
     private DbOpenHelper dbHelper;
     
-    private DemoDBManager(){
-        dbHelper = DbOpenHelper.getInstance(DemoApplication.getInstance().getApplicationContext());
+    private WeChatDBManager(){
+        dbHelper = DbOpenHelper.getInstance(WeChatApplication.getInstance().getApplicationContext());
     }
     
-    public static synchronized DemoDBManager getInstance(){
+    public static synchronized WeChatDBManager getInstance(){
         if(dbMgr == null){
-            dbMgr = new DemoDBManager();
+            dbMgr = new WeChatDBManager();
         }
         return dbMgr;
     }
