@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.hyphenate.chat.EMClient;
 import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.R;
+import cn.ucai.wechat.utils.MFGT;
 
 import com.hyphenate.util.EasyUtils;
 
@@ -58,7 +59,7 @@ public class SplashActivity extends BaseActivity {
 						// avoid main screen overlap Calling Activity
 					} else {
 						//enter main screen
-						startActivity(new Intent(SplashActivity.this, MainActivity.class));
+						MFGT.gotoMainActivity(SplashActivity.this);
 					}
 					finish();
 				}else {
@@ -66,7 +67,7 @@ public class SplashActivity extends BaseActivity {
 						Thread.sleep(sleepTime);
 					} catch (InterruptedException e) {
 					}
-					startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+					MFGT.gotoGuide(SplashActivity.this);
 					finish();
 				}
 			}
