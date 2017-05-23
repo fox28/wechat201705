@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,6 @@ import cn.ucai.wechat.utils.ResultUtils;
 
 /**
  * registerAppServer screen
- *
  */
 public class RegisterActivity extends BaseActivity {
     private static final String TAG = "RegisterActivity";
@@ -57,10 +57,13 @@ public class RegisterActivity extends BaseActivity {
     EditText etPassword;
     @BindView(R.id.et_confirm_password)
     EditText etConfirmPassword;
+    @BindView(R.id.img_back)
+    ImageView mImgBack;
 
     String username, nickname, pwd;
     ProgressDialog pd;
     IUserModel model;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +81,14 @@ public class RegisterActivity extends BaseActivity {
     private void initView() {
         mTxtTitle.setVisibility(View.VISIBLE);
         mTxtTitle.setText(R.string.register);
+        mImgBack.setVisibility(View.VISIBLE);
     }
 
     public void registerEMServer() {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    L.e(TAG, "registerEMServer(), username = "+username+", pwd = "+MD5.getMessageDigest(pwd));
+                    L.e(TAG, "registerEMServer(), username = " + username + ", pwd = " + MD5.getMessageDigest(pwd));
                     // call method in SDK
                     // EMClient环信客户端的持有实例化，
                     EMClient.getInstance().createAccount(username, MD5.getMessageDigest(pwd));
@@ -176,41 +180,41 @@ public class RegisterActivity extends BaseActivity {
     private void registerAppServer() {
         if (checkInput()) {
             showDialog();
-            L.e(TAG, "registerAppServer(), username = "+username+", pwd = "+MD5.getMessageDigest(pwd));
+            L.e(TAG, "registerAppServer(), username = " + username + ", pwd = " + MD5.getMessageDigest(pwd));
             model.register(RegisterActivity.this, username, nickname, MD5.getMessageDigest(pwd),
                     new OnCompleteListener<String>() {
-                @Override
-                public void onSuccess(String jsonStr) {
-                    L.e(TAG, "registerAppServer|onSuccess, jsonStr = "+jsonStr);
-                    boolean success =false; // 设置标识，控制dialog的关闭
-                    if (jsonStr != null) {
-                        Result result = ResultUtils.getResultFromJson(jsonStr, String.class);
-                        if (result != null) {
-                            if (result.isRetMsg()) {
-                                success = true;
-                                registerEMServer();
-                            } else if (result.getRetCode() == I.MSG_REGISTER_USERNAME_EXISTS) {
-                                CommonUtils.showShortToast(R.string.User_already_exists);
-                            } else {
-                                CommonUtils.showShortToast(R.string.Registration_failed);
+                        @Override
+                        public void onSuccess(String jsonStr) {
+                            L.e(TAG, "registerAppServer|onSuccess, jsonStr = " + jsonStr);
+                            boolean success = false; // 设置标识，控制dialog的关闭
+                            if (jsonStr != null) {
+                                Result result = ResultUtils.getResultFromJson(jsonStr, String.class);
+                                if (result != null) {
+                                    if (result.isRetMsg()) {
+                                        success = true;
+                                        registerEMServer();
+                                    } else if (result.getRetCode() == I.MSG_REGISTER_USERNAME_EXISTS) {
+                                        CommonUtils.showShortToast(R.string.User_already_exists);
+                                    } else {
+                                        CommonUtils.showShortToast(R.string.Registration_failed);
+                                    }
+                                }
                             }
+                            if (!success) {// 如果注册不成功，关闭dialog
+                                pd.dismiss();
+
+                            }
+
+
                         }
-                    }
-                    if (!success) {// 如果注册不成功，关闭dialog
-                        pd.dismiss();
 
-                    }
-
-
-                }
-
-                @Override
-                public void onError(String error) { // 发送请求不成功，关闭dialog（上面是发送成功但是结果失败）
-                    pd.dismiss();
-                    L.e(TAG, "registerAppServer|onError = "+error);
-                    CommonUtils.showShortToast(R.string.Registration_failed);
-                }
-            });
+                        @Override
+                        public void onError(String error) { // 发送请求不成功，关闭dialog（上面是发送成功但是结果失败）
+                            pd.dismiss();
+                            L.e(TAG, "registerAppServer|onError = " + error);
+                            CommonUtils.showShortToast(R.string.Registration_failed);
+                        }
+                    });
         }
     }
 
