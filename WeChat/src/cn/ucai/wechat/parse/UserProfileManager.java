@@ -6,13 +6,22 @@ import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
 import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.WeChatHelper.DataSyncListener;
+import cn.ucai.wechat.db.IUserModel;
+import cn.ucai.wechat.db.OnCompleteListener;
+import cn.ucai.wechat.db.UserModel;
+import cn.ucai.wechat.utils.L;
 import cn.ucai.wechat.utils.PreferenceManager;
+import cn.ucai.wechat.utils.Result;
+import cn.ucai.wechat.utils.ResultUtils;
+
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserProfileManager {
+	private static final String TAG = "UserProfileManager";
 
 	/**
 	 * application context
@@ -33,6 +42,8 @@ public class UserProfileManager {
 	private boolean isSyncingContactInfosWithServer = false;
 
 	private EaseUser currentUser;
+	private User currentAppUser;
+	IUserModel userModel;
 
 	public UserProfileManager() {
 	}
@@ -41,8 +52,11 @@ public class UserProfileManager {
 		if (sdkInited) {
 			return true;
 		}
+		// 实例化
+		appContext = context;
 		ParseManager.getInstance().onInit(context);
 		syncContactInfosListeners = new ArrayList<DataSyncListener>();
+		userModel = new UserModel();
 		sdkInited = true;
 		return true;
 	}
@@ -158,6 +172,27 @@ public class UserProfileManager {
 		});
 
 	}
+	public void asyncGetCurrentAppUserInfo(){
+		userModel.loadUserInfo(appContext, EMClient.getInstance().getCurrentUser(),
+				new OnCompleteListener<String>() {
+			@Override
+			public void onSuccess(String jsonStr) {
+//				L.e(TAG, "asyncGetCurrentAppUserInfo, jsonStr = "+jsonStr);
+				if (jsonStr != null) {
+					Result result = ResultUtils.getResultFromJson(jsonStr, User.class);
+					if (result != null &&result.isRetMsg()) {
+						User user = (User) result.getRetData();
+//						L.e(TAG, "asyncGetCurrentAppUserInfo, user = "+user);
+					}
+				}
+			}
+
+			@Override
+			public void onError(String error) {
+			}
+		});
+	}
+
 	public void asyncGetUserInfo(final String username,final EMValueCallBack<EaseUser> callback){
 		ParseManager.getInstance().asyncGetUserInfo(username, callback);
 	}

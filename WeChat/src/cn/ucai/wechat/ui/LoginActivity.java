@@ -41,6 +41,8 @@ import cn.ucai.wechat.R;
 import cn.ucai.wechat.WeChatApplication;
 import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.db.WeChatDBManager;
+import cn.ucai.wechat.utils.L;
+import cn.ucai.wechat.utils.MD5;
 import cn.ucai.wechat.utils.MFGT;
 
 /**
@@ -169,7 +171,8 @@ public class LoginActivity extends BaseActivity {
         final long start = System.currentTimeMillis();
         // call login method
         Log.d(TAG, "EMClient.getInstance().login");
-        EMClient.getInstance().login(currentUsername, currentPassword, new EMCallBack() {
+        L.e(TAG, "login, username = "+currentUsername+", password = "+ MD5.getMessageDigest(currentPassword));
+        EMClient.getInstance().login(currentUsername, MD5.getMessageDigest(currentPassword), new EMCallBack() {
 
             @Override
             public void onSuccess() {
@@ -192,7 +195,10 @@ public class LoginActivity extends BaseActivity {
                 }
                 // get user's info (this should be get from App's server or 3rd party service)
                 WeChatHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
+                // 异步获取用户信息
+                WeChatHelper.getInstance().getUserProfileManager().asyncGetCurrentAppUserInfo();
 
+                // 登录成功跳转MainActivity
                 Intent intent = new Intent(LoginActivity.this,
                         MainActivity.class);
                 startActivity(intent);

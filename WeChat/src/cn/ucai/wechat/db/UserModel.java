@@ -40,4 +40,13 @@ public class UserModel implements IUserModel {
                 .targetClass(String.class)
                 .execute(listener);
     }
+    // http://101.251.196.90:8080/SuperWeChatServerV2.0/findUserByUserName?m_user_name=bbb15906
+    @Override
+    public void loadUserInfo(Context context, String username, OnCompleteListener<String> listener) {
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_FIND_USER)
+                .addParam(I.User.USER_NAME, username)
+                .targetClass(String.class)
+                .execute(listener);
+    }
 }
