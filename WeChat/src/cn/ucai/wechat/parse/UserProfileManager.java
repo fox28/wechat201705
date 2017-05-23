@@ -196,9 +196,9 @@ public class UserProfileManager {
 //						L.e(TAG, "asyncGetCurrentAppUserInfo, user = "+user);
 
 						// 将user.getAvatar()保存到内存 SharePreference中
-						L.e(TAG, "开始保存昵称， nick ="+user.getMUserNick());
 						setCurrentAppUserNick(user.getMUserNick());
 						setCurrentAppUserAvatar(user.getAvatar());
+                        WeChatHelper.getInstance().saveAppContact(user);
 
 					}
 				}
@@ -224,7 +224,6 @@ public class UserProfileManager {
 	}
 	private void setCurrentAppUserNick(String nickname) {
 		getCurrentAppUserInfo().setMUserNick(nickname); //昵称保存到currentAppUser
-		L.e(TAG, "serCurrentAppUserNick, 昵称开始保存到ShareP");
 		PreferenceManager.getInstance().setCurrentUserNick(nickname);
 	}
 

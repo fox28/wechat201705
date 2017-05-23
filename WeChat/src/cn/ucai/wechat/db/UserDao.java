@@ -20,6 +20,7 @@ import android.content.Context;
 
 import cn.ucai.wechat.domain.RobotUser;
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 
 public class UserDao {
 	public static final String TABLE_NAME = "uers";
@@ -109,4 +110,39 @@ public class UserDao {
     public void saveRobotUser(List<RobotUser> robotList){
     	WeChatDBManager.getInstance().saveRobotList(robotList);
     }
+
+	/**
+	 * save contact list
+	 *
+	 * @param contactList
+	 */
+	public void saveAppContactList(List<User> contactList) {
+		WeChatDBManager.getInstance().saveAppContactList(contactList);
+	}
+
+	/**
+	 * get contact list
+	 *
+	 * @return
+	 */
+	public Map<String, User> getAppContactList() {
+
+		return WeChatDBManager.getInstance().getAppContactList();
+	}
+
+	/**
+	 * delete a contact
+	 * @param username
+	 */
+	public void deleteAppContact(String username){
+		WeChatDBManager.getInstance().deleteAppContact(username);
+	}
+
+	/**
+	 * save a contact
+	 * @param user
+	 */
+	public void saveAppContact(User user){
+		WeChatDBManager.getInstance().saveAppContact(user);
+	}
 }

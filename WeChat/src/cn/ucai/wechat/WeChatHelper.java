@@ -49,6 +49,7 @@ import com.hyphenate.easeui.controller.EaseUI.EaseUserProfileProvider;
 import com.hyphenate.easeui.domain.EaseEmojicon;
 import com.hyphenate.easeui.domain.EaseEmojiconGroupEntity;
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.model.EaseAtMessageHelper;
 import com.hyphenate.easeui.model.EaseNotifier;
 import com.hyphenate.easeui.model.EaseNotifier.EaseNotificationInfoProvider;
@@ -85,6 +86,7 @@ public class WeChatHelper {
     protected EMMessageListener messageListener = null;
 
 	private Map<String, EaseUser> contactList;
+    private Map<String, User> appContactList;
 
 	private Map<String, RobotUser> robotList;
 
@@ -968,17 +970,17 @@ public class WeChatHelper {
 	/**
 	 * update contact list
 	 * 
-	 * @param aContactList
+	 * @param list
 	 */
-	public void setContactList(Map<String, EaseUser> aContactList) {
-		if(aContactList == null){
+	public void setContactList(Map<String, EaseUser> list) {
+		if(list == null){
 		    if (contactList != null) {
 		        contactList.clear();
 		    }
 			return;
 		}
 		
-		contactList = aContactList;
+		contactList = list;
 	}
 	
 	/**
@@ -1005,6 +1007,20 @@ public class WeChatHelper {
         }
         
         return contactList;
+    }
+
+    /**
+     * update user list to cache and database
+     *
+     * @param contactInfoList
+     */
+    public void updateContactList(List<EaseUser> contactInfoList) {
+        for (EaseUser u : contactInfoList) {
+            contactList.put(u.getUsername(), u);
+        }
+        ArrayList<EaseUser> mList = new ArrayList<EaseUser>();
+        mList.addAll(contactList.values());
+        mWeChatModel.saveContactList(mList);
     }
     
     /**
@@ -1036,20 +1052,6 @@ public class WeChatHelper {
 		}
 		return robotList;
 	}
-
-	 /**
-     * update user list to cache and database
-     *
-     * @param contactInfoList
-     */
-    public void updateContactList(List<EaseUser> contactInfoList) {
-         for (EaseUser u : contactInfoList) {
-            contactList.put(u.getUsername(), u);
-         }
-         ArrayList<EaseUser> mList = new ArrayList<EaseUser>();
-         mList.addAll(contactList.values());
-         mWeChatModel.saveContactList(mList);
-    }
 
 	public UserProfileManager getUserProfileManager() {
 		if (userProManager == null) {
@@ -1361,6 +1363,65 @@ public class WeChatHelper {
 
     public void popActivity(Activity activity) {
         easeUI.popActivity(activity);
+    }
+
+
+
+
+    /**
+     * update contact list
+     *
+     * @param list
+     */
+    public void setAppContactList(Map<String, User> list) {
+        if(list == null){
+            if (appContactList != null) {
+                appContactList.clear();
+            }
+            return;
+        }
+
+        appContactList = list;
+    }
+
+    /**
+     * save single contact
+     */
+    public void saveAppContact(User user){
+        getAppContactList().put(user.getMUserName(), user);
+        mWeChatModel.saveAppContact(user);
+    }
+
+    /**
+     * get contact list
+     *
+     * @return
+     */
+    public Map<String, User> getAppContactList() {
+        if (isLoggedIn() && appContactList == null) {
+            appContactList = mWeChatModel.getAppContactList();
+        }
+
+        // return a empty non-null object to avoid app crash
+        if(appContactList == null){
+            return new Hashtable<String, User>();
+        }
+
+        return appContactList;
+    }
+
+    /**
+     * update user list to cache and database
+     *
+     * @param contactInfoList
+     */
+    public void updateAppContactList(List<User> contactInfoList) {
+        for (User u : contactInfoList) {
+            appContactList.put(u.getMUserName(), u);
+        }
+        ArrayList<User> mList = new ArrayList<User>();
+        mList.addAll(appContactList.values());
+        mWeChatModel.saveAppContactList(mList);
     }
 
 }

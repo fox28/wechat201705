@@ -448,7 +448,6 @@ public class WeChatDBManager {
      * save a contact
      * @param user
      */
-    // name nick avatar_Id suffix avatarPath avatarType avatarUpdateTime
     synchronized public void saveAppContact(User user){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
