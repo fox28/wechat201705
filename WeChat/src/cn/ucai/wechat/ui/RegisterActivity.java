@@ -84,9 +84,11 @@ public class RegisterActivity extends BaseActivity {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    // call method in SDK
                     L.e(TAG, "registerEMServer(), username = "+username+", pwd = "+MD5.getMessageDigest(pwd));
+                    // call method in SDK
+                    // EMClient环信客户端的持有实例化，
                     EMClient.getInstance().createAccount(username, MD5.getMessageDigest(pwd));
+                    // 工作线程修改UI，runOnUiThread(),还有其他
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (!RegisterActivity.this.isFinishing())
@@ -180,7 +182,7 @@ public class RegisterActivity extends BaseActivity {
                 @Override
                 public void onSuccess(String jsonStr) {
                     L.e(TAG, "registerAppServer|onSuccess, jsonStr = "+jsonStr);
-                    boolean success =false;
+                    boolean success =false; // 设置标识，控制dialog的关闭
                     if (jsonStr != null) {
                         Result result = ResultUtils.getResultFromJson(jsonStr, String.class);
                         if (result != null) {
@@ -194,7 +196,7 @@ public class RegisterActivity extends BaseActivity {
                             }
                         }
                     }
-                    if (!success) {
+                    if (!success) {// 如果注册不成功，关闭dialog
                         pd.dismiss();
 
                     }
@@ -203,7 +205,7 @@ public class RegisterActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onError(String error) {
+                public void onError(String error) { // 发送请求不成功，关闭dialog（上面是发送成功但是结果失败）
                     pd.dismiss();
                     L.e(TAG, "registerAppServer|onError = "+error);
                     CommonUtils.showShortToast(R.string.Registration_failed);
@@ -212,6 +214,9 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 本服务器注册成功、环信注册不成功时，需要删除已注册的账户
+     */
     private void unregister() {
         model.unregister(RegisterActivity.this, username, new OnCompleteListener<String>() {
             @Override
