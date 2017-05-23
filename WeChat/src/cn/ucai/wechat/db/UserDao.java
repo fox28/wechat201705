@@ -35,7 +35,18 @@ public class UserDao {
 	public static final String ROBOT_COLUMN_NAME_ID = "username";
 	public static final String ROBOT_COLUMN_NAME_NICK = "nick";
 	public static final String ROBOT_COLUMN_NAME_AVATAR = "avatar";
-	
+
+	// currentAppUser数据库字段名
+	// name nick avatar_Id avatar_name avatarPath avatarType avatarUpdateTime
+	public static final String USER_TABLE_NAME = "t_superwechat_user";
+	public static final String USER_COLUMN_NAME = "m_user_name";
+	public static final String USER_COLUMN_NAME_NICK = "m_user_nick";
+	public static final String USER_COLUMN_NAME_AVATAR_ID = "m_avatar_id";
+	public static final String USER_COLUMN_NAME_AVATAR_NAME = "m_avatar_user_name";
+	public static final String USER_COLUMN_NAME_AVATAR_SUFFIX = "m_avatar_suffix";
+	public static final String USER_COLUMN_NAME_AVATAR_PATH = "m_avatar_path";
+	public static final String USER_COLUMN_NAME_AVATAR_TYPE = "m_avatar_type";
+	public static final String USER_COLUMN_NAME_AVATAR_UPDATE_TIME = "m_avatar_last_update_time";
 	
 	public UserDao(Context context) {
 	}
