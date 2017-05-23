@@ -194,7 +194,7 @@ public class LoginActivity extends BaseActivity {
                     pd.dismiss();
                 }
                 // get user's info (this should be get from App's server or 3rd party service)
-                WeChatHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
+//                WeChatHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
                 // 异步获取用户信息
                 WeChatHelper.getInstance().getUserProfileManager().asyncGetCurrentAppUserInfo();
 
