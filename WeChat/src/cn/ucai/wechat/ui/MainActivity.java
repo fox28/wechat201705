@@ -29,6 +29,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -66,7 +67,8 @@ import cn.ucai.wechat.widget.DMTabHost;
 import cn.ucai.wechat.widget.MFViewPager;
 
 @SuppressLint("NewApi")
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener,
+        DMTabHost.OnCheckedChangeListener{
 
     protected static final String TAG = "MainActivity";
     @BindView(R.id.txt_left)
@@ -146,6 +148,12 @@ public class MainActivity extends BaseActivity {
         adapter.addFragment(new DiscoverFragment(), getString(R.string.discover));
         adapter.addFragment(settingFragment, getString(R.string.setting));
         mLayoutViewpage.setAdapter(adapter);
+
+        // 设置viewPage和tabHost的监听事件，联动
+        mLayoutViewpage.setOnPageChangeListener(this);
+        mLayoutTabhost.setOnCheckedChangeListener(this);
+        mLayoutTabhost.setChecked(0);
+
 
 //		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, conversationListFragment)
 //				.add(R.id.fragment_container, contactListFragment).hide(contactListFragment).show(conversationListFragment)
@@ -343,6 +351,26 @@ public class MainActivity extends BaseActivity {
             }
         };
         broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        mLayoutTabhost.setChecked(position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onCheckedChange(int checkedPosition, boolean byUser) {
+        mLayoutViewpage.setCurrentItem(checkedPosition, false);
     }
 
     public class MyContactListener implements EMContactListener {
