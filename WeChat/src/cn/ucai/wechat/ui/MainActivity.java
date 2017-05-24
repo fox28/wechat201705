@@ -140,13 +140,14 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         conversationListFragment = new ConversationListFragment();
         contactListFragment = new ContactListFragment();
         SettingsFragment settingFragment = new SettingsFragment();
-        fragments = new Fragment[]{conversationListFragment, contactListFragment, settingFragment};
+        FragmentProfile fragmentProfile = new FragmentProfile();
+        fragments = new Fragment[]{conversationListFragment, contactListFragment, fragmentProfile};
 
         adapter = new MainTabAdapter(getSupportFragmentManager());
         adapter.addFragment(conversationListFragment, getString(R.string.app_name));
         adapter.addFragment(contactListFragment, getString(R.string.contacts));
         adapter.addFragment(new DiscoverFragment(), getString(R.string.discover));
-        adapter.addFragment(settingFragment, getString(R.string.setting));
+        adapter.addFragment(fragmentProfile, getString(R.string.setting));
         mLayoutViewpage.setAdapter(adapter);
 
         // 设置viewPage和tabHost的监听事件，联动
