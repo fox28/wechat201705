@@ -354,25 +354,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
     }
 
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        mLayoutTabhost.setChecked(position);
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
-    @Override
-    public void onCheckedChange(int checkedPosition, boolean byUser) {
-        mLayoutViewpage.setCurrentItem(checkedPosition, false);
-    }
 
     public class MyContactListener implements EMContactListener {
         @Override
@@ -640,4 +621,25 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                                            @NonNull int[] grantResults) {
         PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
     }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        mLayoutTabhost.setChecked(position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onCheckedChange(int checkedPosition, boolean byUser) {
+        mLayoutViewpage.setCurrentItem(checkedPosition, false);
+    }
+
 }
