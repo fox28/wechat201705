@@ -12,7 +12,7 @@ import cn.ucai.wechat.R;
 /**
  * Created by clawpo on 2016/9/22.
  */
-public class DicoverFragment extends Fragment {
+public class DiscoverFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
