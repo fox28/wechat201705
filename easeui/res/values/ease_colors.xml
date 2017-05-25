@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    // 更改EaseTitleBar的背景颜色
+    <color name="black2">#232325</color>
+    <color name="green">#4CAF50</color>
+    <color name="colorPrimary">@color/black2</color>
+    <color name="colorPrimaryDark">@color/black2</color>
+    <color name="colorAccent">@color/green</color>
+    
     <color name="common_top_bar_blue">#4ebcd3</color>
     <color name="btn_login_normal">#00acff</color>
     <color name="btn_login_pressed">#46678d</color>
