@@ -215,6 +215,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      * init views
      */
     private void initView() {
+        mTxtLeft.setVisibility(View.VISIBLE);
 //		unreadLabel = (TextView) findViewById(R.id.unread_msg_number);
 //		unreadAddressLable = (TextView) findViewById(R.id.unread_address_number);
 //		mTabs = new Button[3];
