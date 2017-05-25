@@ -10,6 +10,7 @@ import cn.ucai.wechat.ui.LoginActivity;
 import cn.ucai.wechat.ui.MainActivity;
 import cn.ucai.wechat.ui.RegisterActivity;
 import cn.ucai.wechat.ui.SettingsActivity;
+import cn.ucai.wechat.ui.UserProfileActivity;
 
 /**
  * Created by apple on 2017/5/23.
@@ -57,5 +58,13 @@ public class MFGT {
 
     public static void gotoSettings(Activity activity) {
         startActivity(activity, SettingsActivity.class);
+    }
+
+    public static void gotoUserInfo(Activity activity, boolean settings, String username) {
+//        startActivity(new Intent(getActivity(), UserProfileActivity.class).putExtra("setting", true)
+//                .putExtra("username", EMClient.getInstance().getCurrentUser()));
+        startActivity(activity, new Intent(activity, UserProfileActivity.class)
+        .putExtra("setting",settings)
+        .putExtra("username", username));
     }
 }

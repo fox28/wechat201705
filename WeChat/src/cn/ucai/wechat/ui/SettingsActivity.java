@@ -82,7 +82,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 
 	private LinearLayout blacklistContainer;
 	
-	private LinearLayout userProfileContainer;
+//	private LinearLayout userProfileContainer;
 	
 	/**
 	 * logout
@@ -166,7 +166,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 		textview2 = (TextView) findViewById(R.id.textview2);
 		
 		blacklistContainer = (LinearLayout) findViewById(R.id.ll_black_list);
-		userProfileContainer = (LinearLayout) findViewById(R.id.ll_user_profile);
+//		userProfileContainer = (LinearLayout) findViewById(R.id.ll_user_profile);
 		llDiagnose=(LinearLayout) findViewById(R.id.ll_diagnose);
 		pushNick=(LinearLayout) findViewById(R.id.ll_set_push_nick);
 		edit_custom_appkey = (EditText) findViewById(R.id.edit_custom_appkey);
@@ -175,7 +175,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 		chatOptions = EMClient.getInstance().getOptions();
 		
 		blacklistContainer.setOnClickListener(this);
-		userProfileContainer.setOnClickListener(this);
+//		userProfileContainer.setOnClickListener(this);
 		rl_switch_notification.setOnClickListener(this);
 		rl_switch_sound.setOnClickListener(this);
 		rl_switch_vibrate.setOnClickListener(this);
@@ -387,10 +387,10 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 			case R.id.ll_call_option:
 				startActivity(new Intent(SettingsActivity.this, CallOptionActivity.class));
 				break;
-			case R.id.ll_user_profile:
-				startActivity(new Intent(SettingsActivity.this, UserProfileActivity.class).putExtra("setting", true)
-						.putExtra("username", EMClient.getInstance().getCurrentUser()));
-				break;
+//			case R.id.ll_user_profile:
+//				startActivity(new Intent(SettingsActivity.this, UserProfileActivity.class).putExtra("setting", true)
+//						.putExtra("username", EMClient.getInstance().getCurrentUser()));
+//				break;
 			case R.id.switch_custom_server:
 				if(customServerSwitch.isSwitchOpen()){
 					customServerSwitch.closeSwitch();

@@ -1,6 +1,7 @@
 package cn.ucai.wechat.ui;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -83,6 +84,17 @@ public class FragmentProfile extends Fragment {
 //        break;
         //end of red packet code
     }
+
+    @OnClick(R.id.layout_profile_view)
+    public void gotoUserInfo(){
+
+        L.e(TAG, "onClick, gotoUserInfo, username = "+EMClient.getInstance().getCurrentUser());
+        MFGT.gotoUserInfo(getActivity(), true, EMClient.getInstance().getCurrentUser());
+
+//        startActivity(new Intent(getActivity(), UserProfileActivity.class).putExtra("setting", true)
+//                .putExtra("username", EMClient.getInstance().getCurrentUser()));
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
