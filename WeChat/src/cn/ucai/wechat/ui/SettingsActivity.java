@@ -467,6 +467,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 				runOnUiThread(new Runnable() {
 					public void run() {
 						pd.dismiss();
+						finish();
 						// show login screen
 						MFGT.gotoLoginActivity(SettingsActivity.this);
 						
