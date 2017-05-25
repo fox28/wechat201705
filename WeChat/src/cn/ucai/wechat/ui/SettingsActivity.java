@@ -296,13 +296,15 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 
 	private void setTitleBar() {
 		EaseTitleBar titleBar = (EaseTitleBar) findViewById(R.id.title_bar);
-		titleBar.setLeftImageResource(R.drawable.em_mm_title_back);
-		titleBar.setLeftLayoutClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				MFGT.finish(SettingsActivity.this);
-			}
-		});
+		if (titleBar!=null) {
+			titleBar.setLeftImageResource(R.drawable.em_mm_title_back);
+			titleBar.setLeftLayoutClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					MFGT.finish(SettingsActivity.this);
+				}
+			});
+		}
 	}
 
 
