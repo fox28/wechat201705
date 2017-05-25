@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.easemob.redpacketui.utils.RPRedPacketUtil;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseUserUtils;
@@ -71,6 +72,17 @@ public class FragmentProfile extends Fragment {
         MFGT.gotoSettings(getActivity());
     }
 
+    @OnClick(R.id.tv_profile_money)
+    public void redPacket(){
+        //red packet code : 进入零钱或红包记录页面
+//        case R.id.ll_change: d
+        //支付宝版红包SDK调用如下方法进入红包记录页面
+//				RPRedPacketUtil.getInstance().startRecordActivity(SettingsActivity.this);
+        //钱包版红包SDK调用如下方法进入零钱页面
+        RPRedPacketUtil.getInstance().startChangeActivity(getActivity());
+//        break;
+        //end of red packet code
+    }
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

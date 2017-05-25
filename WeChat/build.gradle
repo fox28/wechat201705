@@ -74,9 +74,10 @@ android {
 }
 
 dependencies {
+    // 微信红包依赖
     compile project(':redpacketlibrary')
     compile project(':EaseUI')
-    compile fileTree(include: '*.jar', exclude: 'android-support-multidex.jar', dir: 'libs')
+    compile fileTree(dir: 'libs', include: '*.jar', exclude: 'android-support-multidex.jar')
     compile 'com.android.support:multidex:1.0.1'
     //考虑到在eclipse中,直接使用源码
     //    compile ('com.anthonycr.grant:permissions:1.0'){
