@@ -57,9 +57,12 @@ public class EaseBaseActivity extends FragmentActivity {
     
     protected void hideSoftKeyboard() {
         if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-            if (getCurrentFocus() != null)
+            if (getCurrentFocus() != null) {
                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
+            }else{// getCurrentFocus()为空，及没有焦点的时候，关闭键盘
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+            }
         }
     }
 
