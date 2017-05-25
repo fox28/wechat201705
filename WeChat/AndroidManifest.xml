@@ -76,6 +76,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             />
+        <!-- 欢迎 -->
+        <activity
+            android:name="cn.ucai.wechat.ui.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide"
+            />
         <!-- 登陆 -->
         <activity
             android:name="cn.ucai.wechat.ui.LoginActivity"
