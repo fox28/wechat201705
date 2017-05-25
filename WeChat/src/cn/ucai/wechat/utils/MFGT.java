@@ -50,7 +50,7 @@ public class MFGT {
 
     public static void gotoLoginActivity(Activity activity) {
         startActivity(activity, new Intent(activity, LoginActivity.class)
-        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK));
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     public static void gotoRegisterActivity(Activity activity) {
