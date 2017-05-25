@@ -64,7 +64,7 @@ public class MFGT {
 //        startActivity(new Intent(getActivity(), UserProfileActivity.class).putExtra("setting", true)
 //                .putExtra("username", EMClient.getInstance().getCurrentUser()));
         startActivity(activity, new Intent(activity, UserProfileActivity.class)
-        .putExtra("setting",settings)
-        .putExtra("username", username));
+                .putExtra("setting", settings)
+                .putExtra("username", username));
     }
 }

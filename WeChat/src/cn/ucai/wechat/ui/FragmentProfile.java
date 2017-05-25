@@ -52,6 +52,10 @@ public class FragmentProfile extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        // 判断是否删除账号
+        if(savedInstanceState != null && savedInstanceState.getBoolean("isConflict", false))
+            return;
+
         initData();
     }
 
