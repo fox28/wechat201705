@@ -16,9 +16,13 @@ import com.hyphenate.easeui.utils.EaseUserUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
+import cn.ucai.wechat.Constant;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.utils.L;
+import cn.ucai.wechat.utils.MFGT;
+
 
 /**
  * Created by apple on 2017/5/24.
@@ -61,4 +65,20 @@ public class FragmentProfile extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    @OnClick(R.id.tv_profile_settings)
+    public void onSettings() {
+        MFGT.gotoSettings(getActivity());
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(((MainActivity)getActivity()).isConflict){
+            outState.putBoolean("isConflict", true);
+        }else if(((MainActivity)getActivity()).getCurrentAccountRemoved()){
+            outState.putBoolean(Constant.ACCOUNT_REMOVED, true);
+        }
+    }
+
 }
