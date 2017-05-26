@@ -103,4 +103,16 @@
     <string name="setting_txt_tongyong">通用</string>
     <string name="setting_txt_about">关于微信</string>
     <string name="setting_btn_exit">退出登录</string>
+    <!--profile-->
+    <string name="user_profile_avatar">头像</string>
+    <string name="user_profile_nick">昵称</string>
+    <string name="user_profile_id">微信号</string>
+    <string name="user_profile_id_hint">abc123</string>
+    <string name="user_profile_code_card">二维码名片</string>
+    <string name="user_profile_address">地址</string>
+    <string name="user_profile_gender">性别</string>
+    <string name="user_profile_not_set">未设置</string>
+    <string name="user_profile_not_filled">未填写</string>
+    <string name="user_profile_region">地区</string>
+    <string name="user_profile_signature">个性签名</string>
 </resources>
