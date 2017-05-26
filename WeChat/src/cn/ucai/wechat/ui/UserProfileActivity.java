@@ -21,8 +21,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hyphenate.EMValueCallBack;
-import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseTitleBar;
 
@@ -30,11 +30,12 @@ import java.io.ByteArrayOutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.utils.MFGT;
 
-public class UserProfileActivity extends BaseActivity implements OnClickListener {
+public class UserProfileActivity extends BaseActivity {
 
     private static final int REQUESTCODE_PICK = 1;
     private static final int REQUESTCODE_CUTTING = 2;
@@ -53,14 +54,9 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
     @BindView(R.id.layout_userInfo_name)
     RelativeLayout mLayoutUserInfoName;
 
-
-    //    private ImageView mIvUserInfoAvatar;
-//    private ImageView headPhotoUpdate;
-//    private ImageView iconRightArrow;
-//    private TextView mTvUserInfoNick;
-//    private TextView mTvUserInfoName;
     private ProgressDialog dialog;
-//    private RelativeLayout mLayoutUserInfoNick;
+
+    User user = null;
 
 
     @Override
@@ -69,7 +65,23 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
         setContentView(R.layout.em_activity_user_profile);
         ButterKnife.bind(this);
         initView();
-        initListener();
+        initData();
+
+    }
+
+    private void initData() {
+        user = WeChatHelper.getInstance().getUserProfileManager().getCurrentAppUserInfo();
+        if (user == null) {
+            finish();
+        } else {
+            showUserInfo();
+        }
+    }
+
+    private void showUserInfo() {
+        mTvUserInfoName.setText(user.getMUserName());
+        EaseUserUtils.setAppUserAvatar(UserProfileActivity.this, user.getMUserName(), mIvUserInfoAvatar);
+        EaseUserUtils.setAppUserNick(user.getMUserName(), mTvUserInfoNick);
     }
 
     private void initView() {
@@ -79,45 +91,11 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
                 MFGT.finish(UserProfileActivity.this);
             }
         });
-//        mIvUserInfoAvatar = (ImageView) findViewById(R.id.user_head_avatar);
-//		headPhotoUpdate = (ImageView) findViewById(R.id.user_head_headphoto_update);
-//        mTvUserInfoName = (TextView) findViewById(R.id.user_username);
-//        mTvUserInfoNick = (TextView) findViewById(R.id.user_nickname);
-//        mLayoutUserInfoNick = (RelativeLayout) findViewById(R.id.rl_nickname);
-//        iconRightArrow = (ImageView) findViewById(R.id.ic_right_arrow);
     }
 
-    private void initListener() {
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
-        boolean enableUpdate = intent.getBooleanExtra("setting", false);
-        if (enableUpdate) {
-//			headPhotoUpdate.setVisibility(View.VISIBLE);
-//            iconRightArrow.setVisibility(View.VISIBLE);
-            mLayoutUserInfoNick.setOnClickListener(this);
-            mIvUserInfoAvatar.setOnClickListener(this);
-        } else {
-//			headPhotoUpdate.setVisibility(View.GONE);
-//            iconRightArrow.setVisibility(View.INVISIBLE);
-        }
-        if (username != null) {
-            if (username.equals(EMClient.getInstance().getCurrentUser())) {
-                mTvUserInfoName.setText(EMClient.getInstance().getCurrentUser());
-                EaseUserUtils.setUserNick(username, mTvUserInfoNick);
-                EaseUserUtils.setUserAvatar(this, username, mIvUserInfoAvatar);
-            } else {
-                mTvUserInfoName.setText(username);
-                EaseUserUtils.setUserNick(username, mTvUserInfoNick);
-                EaseUserUtils.setUserAvatar(this, username, mIvUserInfoAvatar);
-                asyncFetchUserInfo(username);
-            }
-        }
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    @OnClick({R.id.layout_userInfo_avatar, R.id.layout_userInfo_nick})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
             case R.id.layout_userInfo_avatar:
                 uploadHeadPhoto();
                 break;
@@ -137,11 +115,9 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
                             }
                         }).setNegativeButton(R.string.dl_cancel, null).show();
                 break;
-            default:
-                break;
         }
-
     }
+
 
     public void asyncFetchUserInfo(String username) {
         WeChatHelper.getInstance().getUserProfileManager().asyncGetUserInfo(username, new EMValueCallBack<EaseUser>() {
