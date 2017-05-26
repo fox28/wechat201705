@@ -61,11 +61,9 @@ public class MFGT {
         startActivity(activity, SettingsActivity.class);
     }
 
-    public static void gotoUserInfo(Activity activity, boolean settings, String username) {
+    public static void gotoUserInfo(Activity activity) {
 //        startActivity(new Intent(getActivity(), UserProfileActivity.class).putExtra("setting", true)
 //                .putExtra("username", EMClient.getInstance().getCurrentUser()));
-        startActivity(activity, new Intent(activity, UserProfileActivity.class)
-                .putExtra("setting", settings)
-                .putExtra("username", username));
+        startActivity(activity, UserProfileActivity.class);
     }
 }

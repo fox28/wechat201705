@@ -93,7 +93,7 @@ public class FragmentProfile extends Fragment {
     public void gotoUserInfo(){
 
         L.e(TAG, "onClick, gotoUserInfo, username = "+EMClient.getInstance().getCurrentUser());
-        MFGT.gotoUserInfo(getActivity(), true, EMClient.getInstance().getCurrentUser());
+        MFGT.gotoUserInfo(getActivity());
 
 //        startActivity(new Intent(getActivity(), UserProfileActivity.class).putExtra("setting", true)
 //                .putExtra("username", EMClient.getInstance().getCurrentUser()));
