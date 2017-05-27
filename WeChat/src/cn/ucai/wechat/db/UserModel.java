@@ -49,4 +49,16 @@ public class UserModel implements IUserModel {
                 .targetClass(String.class)
                 .execute(listener);
     }
+
+    @Override
+    public void updateUserNick(Context context, String username, String nick, OnCompleteListener<String> listener) {
+//        http://101.251.196.90:8080/SuperWeChatServerV2.0/updateNick?m_user_name=bbb15901&m_user_nick=volley01
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_UPDATE_USER_NICK)
+                .addParam(I.User.USER_NAME, username)
+                .addParam(I.User.NICK, nick)
+                .targetClass(String.class)
+                .execute(listener);
+
+    }
 }

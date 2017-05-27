@@ -2,7 +2,7 @@ package cn.ucai.wechat;
 
 public interface I {
 
-	public static interface User {
+    public static interface User {
 		String TABLE_NAME							=		"t_superwechat_user";
 		String USER_NAME 							= 		"m_user_name";					//用户账号
 		String PASSWORD 							= 		"m_user_password";				//用户密码
@@ -206,4 +206,7 @@ public interface I {
 	String REQUEST_UPDATE_LOCATION 					= 		"updateLocation";
 	/** 客户端发送的分页下载附近的人的请求 */
 	String REQUEST_DOWNLOAD_LOCATION 				= 		"downloadLocation";
+
+	/** 客户端发送的更新用户昵称的广播 */
+	String BROADCAST_UPDATE_USER_NICK 				= 		"updateNick";
 }

@@ -1,9 +1,12 @@
 package cn.ucai.wechat.parse;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
+
+import cn.ucai.wechat.I;
 import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.WeChatHelper.DataSyncListener;
 import cn.ucai.wechat.db.IUserModel;
@@ -149,11 +152,34 @@ public class UserProfileManager {
 	}
 
 	public boolean updateCurrentUserNickName(final String nickname) {
-		boolean isSuccess = ParseManager.getInstance().updateParseNickName(nickname);
-		if (isSuccess) {
-			setCurrentUserNick(nickname);
-		}
-		return isSuccess;
+		userModel.updateUserNick(appContext, EMClient.getInstance().getCurrentUser(), nickname,
+				new OnCompleteListener<String>() {
+					boolean isUpdateNick = false;
+					@Override
+					public void onSuccess(String jsonStr) {
+						L.e(TAG, "updateCurrentUserNickName, onSuccess, jsonStr = "+jsonStr);
+						if (jsonStr != null) {
+							Result result = ResultUtils.getResultFromJson(jsonStr, User.class);
+							if (result != null && result.isRetMsg()) {
+								User user = (User) result.getRetData();
+								if (user != null) {
+									isUpdateNick = true;
+									setCurrentAppUserNick(user.getMUserNick());// 更新内存和SharePreference
+									WeChatHelper.getInstance().saveAppContact(user);// 更新数据库
+								}
+							}
+						}
+						L.e(TAG, "标识3， updateRemoteNick, isUpdateNick = "+isUpdateNick+", nickname = "+nickname);
+						appContext.sendBroadcast(new Intent(I.BROADCAST_UPDATE_USER_NICK)
+								.putExtra(I.User.NICK, isUpdateNick));
+					}
+					@Override
+					public void onError(String error) {
+						appContext.sendBroadcast(new Intent(I.BROADCAST_UPDATE_USER_NICK)
+								.putExtra(I.User.NICK, false));
+					}
+				});
+		return false;
 	}
 
 	public String uploadUserAvatar(byte[] data) {

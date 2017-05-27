@@ -115,4 +115,5 @@
     <string name="user_profile_not_filled">未填写</string>
     <string name="user_profile_region">地区</string>
     <string name="user_profile_signature">个性签名</string>
+    <string name="toast_nick_not_modified">nick not modified</string>
 </resources>

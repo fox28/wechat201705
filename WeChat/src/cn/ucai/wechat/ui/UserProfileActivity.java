@@ -2,14 +2,18 @@ package cn.ucai.wechat.ui;
 
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,12 +35,14 @@ import java.io.ByteArrayOutputStream;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.ucai.wechat.I;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.WeChatHelper;
+import cn.ucai.wechat.utils.L;
 import cn.ucai.wechat.utils.MFGT;
 
 public class UserProfileActivity extends BaseActivity {
-
+    private static final String TAG = "UserProfileActivity";
     private static final int REQUESTCODE_PICK = 1;
     private static final int REQUESTCODE_CUTTING = 2;
     @BindView(R.id.title_bar)
@@ -57,16 +63,23 @@ public class UserProfileActivity extends BaseActivity {
     private ProgressDialog dialog;
 
     User user = null;
-
+    UpdateNickReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle arg0) {
+
         super.onCreate(arg0);
         setContentView(R.layout.em_activity_user_profile);
         ButterKnife.bind(this);
         initView();
         initData();
+        initListener();
+    }
 
+    private void initListener() {
+        mReceiver = new UpdateNickReceiver();
+        IntentFilter filter = new IntentFilter(I.BROADCAST_UPDATE_USER_NICK);
+        registerReceiver(mReceiver, filter);
     }
 
     private void initData() {
@@ -101,6 +114,8 @@ public class UserProfileActivity extends BaseActivity {
                 break;
             case R.id.layout_userInfo_nick:
                 final EditText editText = new EditText(this);
+                editText.setText(user.getMUserNick());
+                editText.setSelectAllOnFocus(true);// 获得焦点时全选文本
                 new Builder(this).setTitle(R.string.setting_nickname).setIcon(android.R.drawable.ic_dialog_info).setView(editText)
                         .setPositiveButton(R.string.dl_ok, new DialogInterface.OnClickListener() {
 
@@ -111,6 +126,7 @@ public class UserProfileActivity extends BaseActivity {
                                     Toast.makeText(UserProfileActivity.this, getString(R.string.toast_nick_not_isnull), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
+                                L.e(TAG, "标识1， onViewClicked, nickString = "+nickString);
                                 updateRemoteNick(nickString);
                             }
                         }).setNegativeButton(R.string.dl_cancel, null).show();
@@ -172,37 +188,15 @@ public class UserProfileActivity extends BaseActivity {
     }
 
 
+    /**
+     * 调用UserProfileManager()相关方法，更新服务器的用户昵称
+     * @param nickName
+     */
     private void updateRemoteNick(final String nickName) {
         dialog = ProgressDialog.show(this, getString(R.string.dl_update_nick), getString(R.string.dl_waiting));
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                boolean updatenick = WeChatHelper.getInstance().getUserProfileManager().updateCurrentUserNickName(nickName);
-                if (UserProfileActivity.this.isFinishing()) {
-                    return;
-                }
-                if (!updatenick) {
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatenick_fail), Toast.LENGTH_SHORT)
-                                    .show();
-                            dialog.dismiss();
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dialog.dismiss();
-                            Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatenick_success), Toast.LENGTH_SHORT)
-                                    .show();
-                            mTvUserInfoNick.setText(nickName);
-                        }
-                    });
-                }
-            }
-        }).start();
+        L.e(TAG, "标识2， updateRemoteNick, nickName = "+nickName);
+        // 通过UserProfileManager.java修改
+        WeChatHelper.getInstance().getUserProfileManager().updateCurrentUserNickName(nickName);
     }
 
     @Override
@@ -289,5 +283,34 @@ public class UserProfileActivity extends BaseActivity {
         return baos.toByteArray();
     }
 
+    private void updateNickView(boolean success){
+        dialog.dismiss();
+        if (!success) {
+            Toast.makeText(this, getString(R.string.toast_updatenick_fail), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.toast_updatenick_success), Toast.LENGTH_SHORT).show();
+            user = WeChatHelper.getInstance().getUserProfileManager().getCurrentAppUserInfo();
+            L.e(TAG, "updateNickView, nick = "+user.getMUserNick());
+            mTvUserInfoNick.setText(user.getMUserNick());
+        }
+    }
+
+    class UpdateNickReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean success = intent.getBooleanExtra(I.User.NICK, false);
+            L.e(TAG, "标识4， 收到Receiver，success = "+success);
+            updateNickView(success);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mReceiver != null) {
+            unregisterReceiver(mReceiver);
+        }
+    }
 
 }
