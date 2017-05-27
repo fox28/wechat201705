@@ -2,6 +2,8 @@ package cn.ucai.wechat.db;
 
 import android.content.Context;
 
+import java.io.File;
+
 import cn.ucai.wechat.I;
 import cn.ucai.wechat.utils.OkHttpUtils;
 
@@ -60,5 +62,18 @@ public class UserModel implements IUserModel {
                 .targetClass(String.class)
                 .execute(listener);
 
+    }
+
+    @Override
+    public void updateAvatar(Context context, String username, File file, OnCompleteListener<String> listener) {
+        // http://101.251.196.90:8080/SuperWeChatServerV2.0/updateAvatar?name_or_hxid=bbb15907&avatarType=user_avatar
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_UPDATE_AVATAR)
+                .addParam(I.NAME_OR_HXID, username)
+                .addParam(I.AVATAR_TYPE, I.AVATAR_TYPE_USER_PATH)
+                .addFile2(file)
+                .targetClass(String.class)
+                .post()
+                .execute(listener);
     }
 }

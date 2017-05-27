@@ -20,6 +20,7 @@ import cn.ucai.wechat.utils.ResultUtils;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.domain.User;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,12 +183,40 @@ public class UserProfileManager {
 		return false;
 	}
 
-	public String uploadUserAvatar(byte[] data) {
-		String avatarUrl = ParseManager.getInstance().uploadParseAvatar(data);
-		if (avatarUrl != null) {
-			setCurrentUserAvatar(avatarUrl);
-		}
-		return avatarUrl;
+	public void uploadUserAvatar(File file) {
+		userModel.updateAvatar(appContext, EMClient.getInstance().getCurrentUser(), file,
+				new OnCompleteListener<String>() {
+					@Override
+					public void onSuccess(String jsonStr) {
+						boolean success = false;
+						L.e(TAG, "uploadUserAvatar, jsonStr = "+jsonStr);
+						if (jsonStr != null) {
+							Result result = ResultUtils.getResultFromJson(jsonStr, User.class);
+							if (result != null && result.isRetMsg()) {
+								User user = (User) result.getRetData();
+								L.e(TAG, "updateUserAvatar|onSuccess, user = "+user);
+								if (user != null) {
+									success = true;
+									setCurrentAppUserAvatar(user.getAvatar()); // 保存到内存和SharePreference；
+									WeChatHelper.getInstance().saveAppContact(user); // 保存到数据库
+								}
+							}
+						}
+						appContext.sendBroadcast(new Intent(I.BROADCAST_UPDATE_AVATAR).
+								putExtra(I.Avatar.UPDATE_TIME, success));
+					}
+
+					@Override
+					public void onError(String error) {
+						appContext.sendBroadcast(new Intent(I.BROADCAST_UPDATE_AVATAR)
+								.putExtra(I.Avatar.UPDATE_TIME, false));
+					}
+				});
+//		String avatarUrl = ParseManager.getInstance().uploadParseAvatar(data);
+//		if (avatarUrl != null) {
+//			setCurrentUserAvatar(avatarUrl);
+//		}
+//		return avatarUrl;
 	}
 
 	public void asyncGetCurrentUserInfo() {

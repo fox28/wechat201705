@@ -209,4 +209,6 @@ public interface I {
 
 	/** 客户端发送的更新用户昵称的广播 */
 	String BROADCAST_UPDATE_USER_NICK 				= 		"updateNick";
+	/** 客户端发送的上传/更新用户头像的广播 */
+	String BROADCAST_UPDATE_AVATAR 					= 		"updateAvatar";
 }

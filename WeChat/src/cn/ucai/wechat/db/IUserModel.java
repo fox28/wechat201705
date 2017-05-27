@@ -2,6 +2,8 @@ package cn.ucai.wechat.db;
 
 import android.content.Context;
 
+import java.io.File;
+
 /**
  * Created by apple on 2017/5/23.
  */
@@ -16,5 +18,7 @@ public interface IUserModel {
     void loadUserInfo(Context context, String username, OnCompleteListener<String> listener);
 
     void updateUserNick(Context context, String username, String nick, OnCompleteListener<String> listener);
+
+    void updateAvatar(Context context, String username, File file, OnCompleteListener<String> listener);
 
 }
