@@ -143,6 +143,7 @@ public class UserProfileManager {
 		return currentUser;
 	}
 	public synchronized User getCurrentAppUserInfo() {
+		L.e(TAG, "getCurrentAppUserInfo, currentAppUser = "+currentAppUser);
 		if (currentAppUser == null||currentAppUser.getMUserName()==null) {
 			String username = EMClient.getInstance().getCurrentUser();
 			currentAppUser = new User(username);
@@ -196,6 +197,9 @@ public class UserProfileManager {
 								User user = (User) result.getRetData();
 								L.e(TAG, "updateUserAvatar|onSuccess, user = "+user);
 								if (user != null) {
+									// 保存用户头像的全部数据
+									currentAppUser = user;
+									L.e(TAG, "uploadUserAvatar|onSuccess, avatar = "+user.getAvatar());
 									success = true;
 									setCurrentAppUserAvatar(user.getAvatar()); // 保存到内存和SharePreference；
 									WeChatHelper.getInstance().saveAppContact(user); // 保存到数据库
