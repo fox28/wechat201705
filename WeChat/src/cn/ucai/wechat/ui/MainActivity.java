@@ -65,6 +65,7 @@ import cn.ucai.wechat.db.InviteMessgeDao;
 import cn.ucai.wechat.db.UserDao;
 import cn.ucai.wechat.runtimepermissions.PermissionsManager;
 import cn.ucai.wechat.runtimepermissions.PermissionsResultAction;
+import cn.ucai.wechat.utils.MFGT;
 import cn.ucai.wechat.widget.DMTabHost;
 import cn.ucai.wechat.widget.MFViewPager;
 import cn.ucai.wechat.widget.TitleMenu.ActionItem;
@@ -143,6 +144,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         registerInternalDebugReceiver();
     }
 
+    TitlePopup.OnItemOnClickListener mOnItemOnClickListener = new TitlePopup.OnItemOnClickListener() {
+        @Override
+        public void onItemClick(ActionItem item, int position) {
+            if (position == 1) {
+                MFGT.gotoAddContactActivity(MainActivity.this);
+            }
+        }
+    };
+
     /**
      * init views
      */
@@ -152,27 +162,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         mTitlePopup.addAction(new ActionItem(MainActivity.this, R.string.menu_addfriend,   R.drawable.icon_menu_addfriend));
         mTitlePopup.addAction(new ActionItem(MainActivity.this, R.string.menu_qrcode,      R.drawable.icon_menu_sao));
         mTitlePopup.addAction(new ActionItem(MainActivity.this, R.string.menu_money,       R.drawable.icon_menu_money));
-
-
+        mTitlePopup.setItemOnClickListener(mOnItemOnClickListener);
         mTitleBar.setRightLayoutClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(getActivity(), AddContactActivity.class));
-                showPopup();
                 if (NetUtils.hasDataConnection(MainActivity.this)) {
-                    mTitlePopup.setItemOnClickListener(mOnItemOnClickListener);
+                    showPopup();
                 }
-                ;
             }
         });
-
-        // 进入添加好友页
-//        mTitleBar.getRightLayout().setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                startActivity(new Intent(getActivity(), AddContactActivity.class));
-//            }
-//        });
 
     }
 
@@ -255,14 +253,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             }
         });
     }
-    TitlePopup.OnItemOnClickListener mOnItemOnClickListener = new TitlePopup.OnItemOnClickListener() {
-        @Override
-        public void onItemClick(ActionItem item, int position) {
-            if (position == 1) {
-                startActivity(new Intent(MainActivity.this, AddContactActivity.class));
-            }
-        }
-    };
 
 
     /**

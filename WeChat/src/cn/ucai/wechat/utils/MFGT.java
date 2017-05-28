@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 
 import cn.ucai.wechat.R;
+import cn.ucai.wechat.ui.AddContactActivity;
 import cn.ucai.wechat.ui.GuideActivity;
 import cn.ucai.wechat.ui.LoginActivity;
 import cn.ucai.wechat.ui.MainActivity;
@@ -65,5 +66,9 @@ public class MFGT {
 //        startActivity(new Intent(getActivity(), UserProfileActivity.class).putExtra("setting", true)
 //                .putExtra("username", EMClient.getInstance().getCurrentUser()));
         startActivity(activity, UserProfileActivity.class);
+    }
+
+    public static void gotoAddContactActivity(MainActivity activity) {
+        startActivity(activity, AddContactActivity.class);
     }
 }
