@@ -40,6 +40,11 @@ public class ConversationListFragment extends EaseConversationListFragment{
     @Override
     protected void setUpView() {
         super.setUpView();
+
+        // 隐藏TitleBar, 继承自EaseBaseFragment
+        hideTitleBar();
+
+
         // register context menu
         registerForContextMenu(conversationListView);
         conversationListView.setOnItemClickListener(new OnItemClickListener() {
