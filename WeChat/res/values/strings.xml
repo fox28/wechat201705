@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Main-->
-    <string name="app_name">微信26</string>
+    <string name="app_name">微信28</string>
     <string name="contacts">通讯录</string>
     <string name="me">我</string>
     <string name="discover">发现</string>
