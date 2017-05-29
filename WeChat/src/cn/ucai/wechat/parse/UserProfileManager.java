@@ -195,11 +195,11 @@ public class UserProfileManager {
 							Result result = ResultUtils.getResultFromJson(jsonStr, User.class);
 							if (result != null && result.isRetMsg()) {
 								User user = (User) result.getRetData();
-								L.e(TAG, "updateUserAvatar|onSuccess, user = "+user);
+//								L.e(TAG, "保存头像成功... updateUserAvatar|onSuccess, user = "+user);
 								if (user != null) {
 									// 保存用户头像的全部数据
 									currentAppUser = user;
-									L.e(TAG, "uploadUserAvatar|onSuccess, avatar = "+user.getAvatar());
+//									L.e(TAG, "uploadUserAvatar|onSuccess, avatar = "+user.getAvatar());
 									success = true;
 									setCurrentAppUserAvatar(user.getAvatar()); // 保存到内存和SharePreference；
 									WeChatHelper.getInstance().saveAppContact(user); // 保存到数据库
