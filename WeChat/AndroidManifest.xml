@@ -76,9 +76,15 @@
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             />
-        <!-- 欢迎 -->
+        <!-- 设置 -->
         <activity
             android:name="cn.ucai.wechat.ui.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide"
+            />
+        <!--搜索用户详情-->
+        <activity
+            android:name="cn.ucai.wechat.ui.FriendProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             />

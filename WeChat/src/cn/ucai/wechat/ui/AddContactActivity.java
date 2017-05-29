@@ -56,6 +56,7 @@ public class AddContactActivity extends BaseActivity {
     private String toAddUsername;
     private ProgressDialog progressDialog;
     IUserModel model;
+    User user = null; // 添加联系人的搜索结果
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +123,7 @@ public class AddContactActivity extends BaseActivity {
                     if (result.isRetMsg() && result != null) {
                         // 跳转用户详情用户详情
                         success = true;
+                        user = (User) result.getRetData();
                     }
                 }
                 showResult(success);
@@ -139,6 +141,7 @@ public class AddContactActivity extends BaseActivity {
         mLlUser.setVisibility(success?View.GONE:View.VISIBLE);
         if (success) {
             // 跳转用户详情页面
+            MFGT.gotoFriendProfileActivity(AddContactActivity.this, user);
         }
     }
 
