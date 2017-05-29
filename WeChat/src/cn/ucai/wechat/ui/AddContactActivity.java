@@ -81,6 +81,11 @@ public class AddContactActivity extends BaseActivity {
         });
     }
 
+    private void showDialog() {
+        progressDialog = new ProgressDialog(AddContactActivity.this);
+        progressDialog.setMessage(getString(R.string.addcontact_search));
+        progressDialog.show();
+    }
 
     /**
      * search contact
@@ -95,6 +100,7 @@ public class AddContactActivity extends BaseActivity {
         }
         // TODO you can search the user from your app server here.
 
+        showDialog();
         searchUser();
 
 
@@ -129,6 +135,7 @@ public class AddContactActivity extends BaseActivity {
     }
 
     private void showResult(boolean success) {
+        progressDialog.dismiss();// 隐藏dialog
         mLlUser.setVisibility(success?View.GONE:View.VISIBLE);
         if (success) {
             // 跳转用户详情页面
