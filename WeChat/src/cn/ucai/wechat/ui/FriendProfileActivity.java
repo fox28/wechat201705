@@ -12,6 +12,7 @@ import com.hyphenate.easeui.widget.EaseTitleBar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.ucai.wechat.I;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.WeChatHelper;
@@ -93,5 +94,16 @@ public class FriendProfileActivity extends BaseActivity {
                 MFGT.finish(FriendProfileActivity.this);
             }
         });
+    }
+
+    @OnClick(R.id.btn_add_contact)
+    public void onAddContact() {
+        boolean isConfirm = true;
+        if (isConfirm) {
+            // 跳转发送验证申请的界面
+            MFGT.gotoSendMsgForAddFriend(FriendProfileActivity.this, user.getMUserName());
+        } else {
+            // 直接添加好友
+        }
     }
 }

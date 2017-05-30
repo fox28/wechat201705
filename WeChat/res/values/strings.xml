@@ -73,6 +73,9 @@
     <string name="addcontact_send_msg_prefix">我是</string>
     <string name="addcontact_be_friented">已添加</string>
     <string name="addcontact_search_no_result">该用户不存在</string>
+    <string name="addcontact_send_title">验证申请</string>
+    <string name="addcontact_note_title">为朋友设置备注</string>
+
 
 
     <!-- Dicover-->

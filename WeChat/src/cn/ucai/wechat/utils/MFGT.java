@@ -14,6 +14,7 @@ import cn.ucai.wechat.ui.GuideActivity;
 import cn.ucai.wechat.ui.LoginActivity;
 import cn.ucai.wechat.ui.MainActivity;
 import cn.ucai.wechat.ui.RegisterActivity;
+import cn.ucai.wechat.ui.SendMsgForAddFriendActivity;
 import cn.ucai.wechat.ui.SettingsActivity;
 import cn.ucai.wechat.ui.UserProfileActivity;
 
@@ -72,12 +73,17 @@ public class MFGT {
         startActivity(activity, UserProfileActivity.class);
     }
 
-    public static void gotoAddContactActivity(MainActivity activity) {
+    public static void gotoAddContactActivity(Activity activity) {
         startActivity(activity, AddContactActivity.class);
     }
 
-    public static void gotoFriendProfileActivity(AddContactActivity activity, User user) {
+    public static void gotoFriendProfileActivity(Activity activity, User user) {
         startActivity(activity, new Intent(activity, FriendProfileActivity.class)
                 .putExtra(I.User.USER_NAME, user));
+    }
+
+    public static void gotoSendMsgForAddFriend(Activity activity, String userName) {
+        startActivity(activity, new Intent(activity, SendMsgForAddFriendActivity.class)
+                .putExtra(I.User.USER_NAME, userName));
     }
 }

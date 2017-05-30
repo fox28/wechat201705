@@ -88,6 +88,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
             />
+        <!--添加好友|验证申请-->
+        <activity
+            android:name="cn.ucai.wechat.ui.SendMsgForAddFriendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide"
+            />
         <!-- 登陆 -->
         <activity
             android:name="cn.ucai.wechat.ui.LoginActivity"
