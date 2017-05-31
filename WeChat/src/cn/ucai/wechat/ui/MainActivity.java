@@ -84,9 +84,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     DMTabHost mLayoutTabhost;
     @BindView(R.id.title_bar)
     EaseTitleBar mTitleBar;
-    // textview for unread message count
+    // textview for unread message count 会话列表未读消息
 //	private TextView unreadLabel;
-    // textview for unread event message
+    // textview for unread event message 通讯录列表未读消息
 //	private TextView unreadAddressLable;
 
     private Button[] mTabs;
@@ -283,7 +283,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 //		mTabs[currentTabIndex].setSelected(false);
 //		// set current tab selected
 //		mTabs[index].setSelected(true);
-//		currentTabIndex = index;
+//		currentTabIndex = index; // 修改currentTabIndex的值，显示未读消息时会进行判断、显示
     }
 
     EMMessageListener messageListener = new EMMessageListener() {
@@ -361,9 +361,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                     if (conversationListFragment != null) {
                         conversationListFragment.refresh();
                     }
-                } else if (currentTabIndex == 1) {
+                } else if (currentTabIndex == 1) { // 当currentTabIndex=1时，刷新未读消息
                     if (contactListFragment != null) {
-                        contactListFragment.refresh();
+                        contactListFragment.refresh();// 刷新未读消息
                     }
                 }
                 String action = intent.getAction();
@@ -458,16 +458,17 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      * update the total unread count
      */
     public void updateUnreadAddressLable() {
-//		runOnUiThread(new Runnable() {
-//			public void run() {
-//				int count = getUnreadAddressCountTotal();
+		runOnUiThread(new Runnable() {
+			public void run() {
+				int count = getUnreadAddressCountTotal();
+                mLayoutTabhost.setHasNew(1, count>0);
 //				if (count > 0) {
 //					unreadAddressLable.setVisibility(View.VISIBLE);
 //				} else {
 //					unreadAddressLable.setVisibility(View.INVISIBLE);
 //				}
-//			}
-//		});
+			}
+		});
     }
 
     /**
