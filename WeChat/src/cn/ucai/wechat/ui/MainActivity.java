@@ -144,6 +144,10 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         registerInternalDebugReceiver();
     }
 
+    /**
+     * TitlePopup的列表项单击事件
+     * 跳转"添加朋友"
+     */
     TitlePopup.OnItemOnClickListener mOnItemOnClickListener = new TitlePopup.OnItemOnClickListener() {
         @Override
         public void onItemClick(ActionItem item, int position) {
