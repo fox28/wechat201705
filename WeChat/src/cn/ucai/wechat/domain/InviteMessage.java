@@ -18,7 +18,11 @@ public class InviteMessage {
 	private long time;
 	private String reason;
 
+	private String avatar;
+	private String nick;
+
 	private InviteMesageStatus status;
+
 	private String groupId;
 	private String groupName;
 	private String groupInviter;
@@ -43,6 +47,7 @@ public class InviteMessage {
 	}
 
 
+
 	public String getReason() {
 		return reason;
 	}
@@ -50,6 +55,24 @@ public class InviteMessage {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public String getNick() {
+		return nick;
+	}
+
+	public void setNick(String nick) {
+		this.nick = nick;
+	}
+
+
 
 	public InviteMesageStatus getStatus() {
 		return status;
