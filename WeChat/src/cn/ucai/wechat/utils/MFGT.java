@@ -1,6 +1,7 @@
 package cn.ucai.wechat.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 
@@ -8,6 +9,7 @@ import com.hyphenate.easeui.domain.User;
 
 import cn.ucai.wechat.I;
 import cn.ucai.wechat.R;
+import cn.ucai.wechat.domain.InviteMessage;
 import cn.ucai.wechat.ui.AddContactActivity;
 import cn.ucai.wechat.ui.FriendProfileActivity;
 import cn.ucai.wechat.ui.GuideActivity;
@@ -81,6 +83,10 @@ public class MFGT {
     public static void gotoFriendProfileActivity(Activity activity, User user) {
         startActivity(activity, new Intent(activity, FriendProfileActivity.class)
                 .putExtra(I.User.USER_NAME, user));
+    }
+    public static void gotoFriendProfileActivity(Context context, InviteMessage msg) {
+        startActivity((Activity)context, new Intent(context, FriendProfileActivity.class)
+                .putExtra(I.User.NICK, msg));
     }
 
     public static void gotoSendMsgForAddFriend(Activity activity, String userName) {

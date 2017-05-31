@@ -16,6 +16,7 @@ import butterknife.OnClick;
 import cn.ucai.wechat.I;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.WeChatHelper;
+import cn.ucai.wechat.domain.InviteMessage;
 import cn.ucai.wechat.utils.MFGT;
 
 /**
@@ -53,10 +54,19 @@ public class FriendProfileActivity extends BaseActivity {
 
     private void initData() {
         user = (User) getIntent().getSerializableExtra(I.User.USER_NAME);
-        if (user == null) {
-            MFGT.finish(FriendProfileActivity.this);
-        } else {
+        if (user != null) {
             showFriendUserInfo();
+        } else {
+            InviteMessage msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
+            if (msg != null) {
+                user = new User(msg.getFrom());
+                user.setAvatar(msg.getAvatar());
+                user.setMUserNick(msg.getNick());
+
+                showFriendUserInfo();
+            } else {
+                    MFGT.finish(FriendProfileActivity.this);
+            }
         }
     }
 
@@ -75,6 +85,9 @@ public class FriendProfileActivity extends BaseActivity {
         EaseUserUtils.setAppUserAvatar(FriendProfileActivity.this, user,mIvFriendAvatar);
 
         showButton(isFriend);
+
+        // 从服务器异步加载用户的最新信息，填充到好友列表或者新的朋友列表
+        syncFriendUserInfo();
     }
 
     /**
@@ -105,5 +118,9 @@ public class FriendProfileActivity extends BaseActivity {
         } else {
             // 直接添加好友
         }
+    }
+
+    private void syncFriendUserInfo(){
+        // 从服务器异步加载用户的最新信息，填充到好友列表或者新的朋友列表
     }
 }
