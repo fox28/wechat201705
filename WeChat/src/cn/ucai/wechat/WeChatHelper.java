@@ -29,6 +29,9 @@ import com.hyphenate.chat.EMMessage.Type;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
 
+import cn.ucai.wechat.db.IUserModel;
+import cn.ucai.wechat.db.OnCompleteListener;
+import cn.ucai.wechat.db.UserModel;
 import cn.ucai.wechat.db.WeChatDBManager;
 import cn.ucai.wechat.db.InviteMessgeDao;
 import cn.ucai.wechat.db.UserDao;
@@ -41,7 +44,11 @@ import cn.ucai.wechat.ui.ChatActivity;
 import cn.ucai.wechat.ui.MainActivity;
 import cn.ucai.wechat.ui.VideoCallActivity;
 import cn.ucai.wechat.ui.VoiceCallActivity;
+import cn.ucai.wechat.utils.L;
 import cn.ucai.wechat.utils.PreferenceManager;
+import cn.ucai.wechat.utils.Result;
+import cn.ucai.wechat.utils.ResultUtils;
+
 import com.hyphenate.easeui.controller.EaseUI;
 import com.hyphenate.easeui.controller.EaseUI.EaseEmojiconInfoProvider;
 import com.hyphenate.easeui.controller.EaseUI.EaseSettingsProvider;
@@ -127,6 +134,7 @@ public class WeChatHelper {
 
     private InviteMessgeDao inviteMessgeDao;
     private UserDao userDao;
+    private IUserModel userModel;
 
     private LocalBroadcastManager broadcastManager;
 
@@ -487,6 +495,7 @@ public class WeChatHelper {
     private void initDbDao() {
         inviteMessgeDao = new InviteMessgeDao(appContext);
         userDao = new UserDao(appContext);
+        userModel = new UserModel();// 实例化userModel;
     }
     
     /**
@@ -808,11 +817,38 @@ public class WeChatHelper {
         if(inviteMessgeDao == null){
             inviteMessgeDao = new InviteMessgeDao(appContext);
         }
-        inviteMessgeDao.saveMessage(msg);
+//        inviteMessgeDao.saveMessage(msg);
+        syncUserInfoAddToMsg(msg);
         //increase the unread message count
         inviteMessgeDao.saveUnreadMessageCount(1);
         // notify there is new message
         getNotifier().vibrateAndPlayTone(null);
+    }
+
+    private void syncUserInfoAddToMsg(final InviteMessage msg) {
+        userModel.loadUserInfo(appContext, msg.getFrom(), new OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String jsonStr) {
+                if (jsonStr != null) {
+                    Log.e(TAG, "syncUserInfoAddToMsg|onSuccess, jsonStr = "+jsonStr);
+                    Result result = ResultUtils.getResultFromJson(jsonStr, User.class);
+                    if (result != null && result.isRetMsg()) {
+                        User user = (User) result.getRetData();
+                        L.e(TAG, "syncUserInfoAddToMsg, user = "+user);
+                        if (user != null) {
+                            msg.setAvatar(user.getAvatar());
+                            msg.setNick(user.getMUserNick());
+                        }
+                    }
+                }
+                inviteMessgeDao.saveMessage(msg);
+            }
+
+            @Override
+            public void onError(String error) {
+                inviteMessgeDao.saveMessage(msg);
+            }
+        });
     }
 
     /**

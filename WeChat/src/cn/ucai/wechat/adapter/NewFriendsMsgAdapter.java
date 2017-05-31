@@ -16,6 +16,8 @@ package cn.ucai.wechat.adapter;
 import java.util.List;
 
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.utils.EaseUserUtils;
+
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.db.InviteMessgeDao;
 import cn.ucai.wechat.domain.InviteMessage;
@@ -91,7 +93,10 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 			}
 			
 			holder.reason.setText(msg.getReason());
-			holder.name.setText(msg.getFrom());
+//			holder.name.setText(msg.getFrom());
+			holder.name.setText(msg.getNick());
+			EaseUserUtils.showAvatar(context, msg.getAvatar(),holder.avator);
+
 			// holder.time.setText(DateUtils.getTimestampString(new
 			// Date(msg.getTime())));
 			if (msg.getStatus() == InviteMessage.InviteMesageStatus.BEAGREED) {
