@@ -661,6 +661,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @Override
     public void onPageSelected(int position) {
         mLayoutTabhost.setChecked(position);
+        currentTabIndex = position;  // 修改currentTabIndex,从而使registerBroadcastReceiver()可以刷新未读消息
     }
 
     @Override
@@ -671,6 +672,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @Override
     public void onCheckedChange(int checkedPosition, boolean byUser) {
         mLayoutViewpage.setCurrentItem(checkedPosition, false);
+        currentTabIndex = checkedPosition; // 修改currentTabIndex,从而使registerBroadcastReceiver()可以刷新未读消息
     }
 
 }
