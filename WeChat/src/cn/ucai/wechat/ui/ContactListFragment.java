@@ -22,6 +22,7 @@ import cn.ucai.wechat.WeChatHelper.DataSyncListener;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.db.InviteMessgeDao;
 import cn.ucai.wechat.db.UserDao;
+import cn.ucai.wechat.utils.MFGT;
 import cn.ucai.wechat.widget.ContactItemView;
 import cn.ucai.wechat.widget.TitleMenu.ActionItem;
 import cn.ucai.wechat.widget.TitleMenu.TitlePopup;
@@ -169,7 +170,8 @@ public class ContactListFragment extends EaseContactListFragment {
             switch (v.getId()) {
             case R.id.application_item:
                 // 进入申请与通知页面
-                startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
+                MFGT.gotoNewFriendsMsgActivity(getActivity());
+//                startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
                 break;
             case R.id.group_item:
                 // 进入群聊列表页面
