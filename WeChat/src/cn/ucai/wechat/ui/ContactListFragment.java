@@ -72,11 +72,11 @@ public class ContactListFragment extends EaseContactListFragment {
 //        headerView.findViewById(R.id.chat_room_item).setOnClickListener(clickListener);
 //        headerView.findViewById(R.id.robot_item).setOnClickListener(clickListener);
         listView.addHeaderView(headerView);
-        //add loading view
+        //add loading view  下载数据是显示dialog
         loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
         contentContainer.addView(loadingView);
 
-        registerForContextMenu(listView);
+        registerForContextMenu(listView);// 长按联系人人时显示的菜单
     }
     
     @Override
@@ -139,9 +139,9 @@ public class ContactListFragment extends EaseContactListFragment {
         WeChatHelper.getInstance().getUserProfileManager().addSyncContactInfoListener(contactInfoSyncListener);
         
         if (WeChatHelper.getInstance().isContactsSyncedWithServer()) {
-            loadingView.setVisibility(View.GONE);
+            loadingView.setVisibility(View.GONE); // dialog消失
         } else if (WeChatHelper.getInstance().isSyncingContactsWithServer()) {
-            loadingView.setVisibility(View.VISIBLE);
+            loadingView.setVisibility(View.VISIBLE);  // dialog显示
         }
     }
     
@@ -215,10 +215,11 @@ public class ContactListFragment extends EaseContactListFragment {
                 e.printStackTrace();
             }
 			return true;
-		}else if(item.getItemId() == R.id.add_to_blacklist){
-			moveToBlacklist(toBeProcessUsername);
-			return true;
 		}
+//		else if(item.getItemId() == R.id.add_to_blacklist){
+//			moveToBlacklist(toBeProcessUsername);
+//			return true;
+//		}
 		return super.onContextItemSelected(item);
 	}
 
