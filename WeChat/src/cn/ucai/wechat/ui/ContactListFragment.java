@@ -28,6 +28,7 @@ import cn.ucai.wechat.widget.TitleMenu.ActionItem;
 import cn.ucai.wechat.widget.TitleMenu.TitlePopup;
 
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.ui.EaseContactListFragment;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.NetUtils;
@@ -81,10 +82,10 @@ public class ContactListFragment extends EaseContactListFragment {
     
     @Override
     public void refresh() {
-        Map<String, EaseUser> m = WeChatHelper.getInstance().getContactList();
+        Map<String, User> m = WeChatHelper.getInstance().getAppContactList();
         if (m instanceof Hashtable<?, ?>) {
             //noinspection unchecked
-            m = (Map<String, EaseUser>) ((Hashtable<String, EaseUser>)m).clone();
+            m = (Map<String, User>) ((Hashtable<String, User>)m).clone();
         }
         setContactsMap(m);
         super.refresh();
@@ -106,9 +107,9 @@ public class ContactListFragment extends EaseContactListFragment {
         hideTitleBar();
 
         //设置联系人数据
-        Map<String, EaseUser> m = WeChatHelper.getInstance().getContactList();
+        Map<String, User> m = WeChatHelper.getInstance().getAppContactList();
         if (m instanceof Hashtable<?, ?>) {
-            m = (Map<String, EaseUser>) ((Hashtable<String, EaseUser>)m).clone();
+            m = (Map<String, User>) ((Hashtable<String, User>)m).clone();
         }
         setContactsMap(m);
         super.setUpView();
