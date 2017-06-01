@@ -1,5 +1,6 @@
 package cn.ucai.wechat.ui;
 
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,14 +17,22 @@ import butterknife.OnClick;
 import cn.ucai.wechat.I;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.WeChatHelper;
+import cn.ucai.wechat.db.IUserModel;
+import cn.ucai.wechat.db.InviteMessgeDao;
+import cn.ucai.wechat.db.OnCompleteListener;
+import cn.ucai.wechat.db.UserModel;
 import cn.ucai.wechat.domain.InviteMessage;
+import cn.ucai.wechat.utils.L;
 import cn.ucai.wechat.utils.MFGT;
+import cn.ucai.wechat.utils.Result;
+import cn.ucai.wechat.utils.ResultUtils;
 
 /**
  * Created by apple on 2017/5/30.
  */
 
 public class FriendProfileActivity extends BaseActivity {
+    private static final String TAG = "FriendProfileActivity";
 
     @BindView(R.id.title_bar)
     EaseTitleBar mTitleBar;
@@ -41,6 +50,10 @@ public class FriendProfileActivity extends BaseActivity {
     Button mBtnSendVideo;
 
     User user = null; // 添加联系人的搜索结果
+    IUserModel userModel;
+    InviteMessage msg;
+    boolean isFriend = false;
+
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -53,11 +66,12 @@ public class FriendProfileActivity extends BaseActivity {
     }
 
     private void initData() {
+        userModel = new UserModel();
         user = (User) getIntent().getSerializableExtra(I.User.USER_NAME);
         if (user != null) {
             showFriendUserInfo();
         } else {
-            InviteMessage msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
+            msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
             if (msg != null) {
                 user = new User(msg.getFrom());
                 user.setAvatar(msg.getAvatar());
@@ -122,5 +136,38 @@ public class FriendProfileActivity extends BaseActivity {
 
     private void syncFriendUserInfo(){
         // 从服务器异步加载用户的最新信息，填充到好友列表或者新的朋友列表
+        userModel.loadUserInfo(FriendProfileActivity.this, user.getMUserName(), new OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String jsonStr) {
+                if (jsonStr != null) {
+                    Result result = ResultUtils.getResultFromJson(jsonStr, User.class);
+                    if (result != null && result.isRetMsg()) {
+                        User u = (User) result.getRetData();
+                        if (u != null) {
+                            if (msg!=null) {
+                                // 更新msg
+                                ContentValues values = new ContentValues();
+                                values.put(InviteMessgeDao.COLUMN_NAME_NICK, u.getMUserNick());
+                                values.put(InviteMessgeDao.COLUMN_NAME_AVATAR, u.getAvatar());
+                                InviteMessgeDao dao = new InviteMessgeDao(FriendProfileActivity.this);
+                                dao.updateMessage(msg.getId(), values);
+
+                                // 更新完成后，下次今日好友列表，看到是最新头像。下次、下次、下次
+                            } else if (isFriend) {
+                                // update user
+                                WeChatHelper.getInstance().saveAppContact(u);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
+
+
 }
