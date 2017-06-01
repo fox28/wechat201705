@@ -2,6 +2,7 @@ package cn.ucai.wechat;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -41,6 +42,7 @@ import cn.ucai.wechat.domain.RobotUser;
 import cn.ucai.wechat.parse.UserProfileManager;
 import cn.ucai.wechat.receiver.CallReceiver;
 import cn.ucai.wechat.ui.ChatActivity;
+import cn.ucai.wechat.ui.FriendProfileActivity;
 import cn.ucai.wechat.ui.MainActivity;
 import cn.ucai.wechat.ui.VideoCallActivity;
 import cn.ucai.wechat.ui.VoiceCallActivity;
@@ -737,6 +739,8 @@ public class WeChatHelper {
 
         @Override
         public void onContactAdded(String username) {
+            // 自己同意添加对方为好友 ，所以在这里向服务器发送好友添加成功
+            L.e(TAG, "MyContactListener, onContactAdded, username = "+username);
             // save contact
             Map<String, EaseUser> localUsers = getContactList();
             Map<String, EaseUser> toAddUsers = new HashMap<String, EaseUser>();
@@ -748,11 +752,52 @@ public class WeChatHelper {
             toAddUsers.put(username, user);
             localUsers.putAll(toAddUsers);
 
+            onAppContactAdded(username);// 参数为对方用户名
+
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+        }
+
+        private void onAppContactAdded(final String username) {
+            userModel.addContact(appContext, EMClient.getInstance().getCurrentUser(), username,
+                    new OnCompleteListener<String>() {
+                        @Override
+                        public void onSuccess(String jsonStr) {
+                            // {"retCode":0,"retMsg":true,"retData":{"muserName":"bbb15907","muserNick":"天蝎",
+                            // "mavatarId":1970,"mavatarPath":"user_avatar","mavatarSuffix":".jpg","mavatarType":0,
+                            // "mavatarLastUpdateTime":"1496140147081"}}
+
+                            if (jsonStr != null) {
+                                Result result = ResultUtils.getResultFromJson(jsonStr, User.class);
+                                if (result != null && result.isRetMsg()) {
+                                    User u = (User) result.getRetData();
+                                    if (u != null) {
+                                        // 保存到数据库
+                                       Map<String, User> appContactList = getAppContactList();// 获得当前联系人列表
+                                        if (!appContactList.containsKey(u.getMUserName())) {
+//                                            saveAppContact(u);
+                                             userDao.saveAppContact(u);
+                                        }
+                                        // 保存到内存 内存是什么？List？(Map<String, User>)
+                                        appContactList.put(u.getMUserName(), u);
+                                        // 通知联系人列表更新
+                                        broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+
+                                    }
+
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    });
         }
 
         @Override
         public void onContactDeleted(String username) {
+            L.e(TAG, "MyContactListener, onContactDeleted, username = "+username);
             Map<String, EaseUser> localUsers = WeChatHelper.getInstance().getContactList();
             localUsers.remove(username);
             userDao.deleteContact(username);
@@ -765,6 +810,8 @@ public class WeChatHelper {
 
         @Override
         public void onContactInvited(String username, String reason) {
+            // 对方发送添加好友申请
+            L.e(TAG, "MyContactListener, onContactInvited, username = "+username);
             List<InviteMessage> msgs = inviteMessgeDao.getMessagesList();
 
             for (InviteMessage inviteMessage : msgs) {
@@ -786,6 +833,7 @@ public class WeChatHelper {
 
         @Override
         public void onFriendRequestAccepted(String username) {
+            L.e(TAG, "MyContactListener, onFriendRequestAccepted, username = "+username);
             List<InviteMessage> msgs = inviteMessgeDao.getMessagesList();
             for (InviteMessage inviteMessage : msgs) {
                 if (inviteMessage.getFrom().equals(username)) {
@@ -805,10 +853,12 @@ public class WeChatHelper {
         @Override
         public void onFriendRequestDeclined(String username) {
             // your request was refused
-            Log.d(username, username + " refused to your request");
+            L.e(TAG, "MyContactListener, onFriendRequestDeclined, username = "+username);
+//            Log.d(username, username + " refused to your request");
         }
     }
-    
+
+
     /**
      * save and notify invitation message
      * @param msg
@@ -1445,7 +1495,7 @@ public class WeChatHelper {
      * save single contact
      */
     public void saveAppContact(User user){
-        getAppContactList().put(user.getMUserName(), user);
+        getAppContactList().put(user.getMUserName(), user); // 保存到内存
         mWeChatModel.saveAppContact(user);
     }
 

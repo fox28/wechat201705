@@ -76,4 +76,16 @@ public class UserModel implements IUserModel {
                 .post()
                 .execute(listener);
     }
+
+    @Override
+    public void addContact(Context context, String username, String cname, OnCompleteListener<String> listener) {
+        // http://101.251.196.90:8080/SuperWeChatServerV2.0/addContact?m_contact_user_name=bb15907&m_contact_cname=bbb15907
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_ADD_CONTACT)
+                .addParam(I.Contact.USER_NAME, username)
+                .addParam(I.Contact.CU_NAME, cname)
+                .targetClass(String.class)
+                .execute(listener);
+
+    }
 }
