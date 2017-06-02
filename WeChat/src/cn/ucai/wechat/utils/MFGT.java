@@ -11,6 +11,7 @@ import cn.ucai.wechat.I;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.domain.InviteMessage;
 import cn.ucai.wechat.ui.AddContactActivity;
+import cn.ucai.wechat.ui.ChatActivity;
 import cn.ucai.wechat.ui.FriendProfileActivity;
 import cn.ucai.wechat.ui.GuideActivity;
 import cn.ucai.wechat.ui.LoginActivity;
@@ -96,5 +97,10 @@ public class MFGT {
 
     public static void gotoNewFriendsMsgActivity(Activity activity) {
         startActivity(activity, NewFriendsMsgActivity.class);
+    }
+
+    public static void gotoChat(Activity activity, String userName) {
+        startActivity(activity, new Intent(activity, ChatActivity.class)
+                .putExtra("userId", userName));
     }
 }
