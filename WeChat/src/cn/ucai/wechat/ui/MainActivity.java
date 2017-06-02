@@ -58,6 +58,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.wechat.Constant;
+import cn.ucai.wechat.I;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.adapter.MainTabAdapter;
@@ -65,6 +66,7 @@ import cn.ucai.wechat.db.InviteMessgeDao;
 import cn.ucai.wechat.db.UserDao;
 import cn.ucai.wechat.runtimepermissions.PermissionsManager;
 import cn.ucai.wechat.runtimepermissions.PermissionsResultAction;
+import cn.ucai.wechat.utils.L;
 import cn.ucai.wechat.utils.MFGT;
 import cn.ucai.wechat.widget.DMTabHost;
 import cn.ucai.wechat.widget.MFViewPager;
@@ -508,6 +510,13 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     protected void onResume() {
         super.onResume();
 
+        boolean isFromChat = getIntent().getBooleanExtra(I.IS_FROM_CHAT, false);
+        L.e(TAG, "onResume, isFromChat = "+isFromChat);
+        if (isFromChat) {
+            mLayoutTabhost.setChecked(0);
+            mLayoutViewpage.setCurrentItem(0);
+        }
+
         if (!isConflict && !isCurrentAccountRemoved) {
             updateUnreadLabel();
             updateUnreadAddressLable();
@@ -615,6 +624,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         showExceptionDialogFromIntent(intent);
+        // getIntent()数据，如果数据为true,跳转会话列表
+//        boolean isFromChat = intent.getBooleanExtra(I.IS_FROM_CHAT, false);
+//        L.e(TAG, "onNewIntent, isFromChat = "+isFromChat);
+//        if (isFromChat) {
+//            mLayoutTabhost.setChecked(0);
+//            mLayoutViewpage.setCurrentItem(0);
+//        }
+        setIntent(intent);
+
     }
 
     /**

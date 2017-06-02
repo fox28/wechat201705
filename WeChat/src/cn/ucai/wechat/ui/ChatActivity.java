@@ -5,14 +5,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.runtimepermissions.PermissionsManager;
+import cn.ucai.wechat.utils.L;
+import cn.ucai.wechat.utils.MFGT;
+
 import com.hyphenate.easeui.ui.EaseChatFragment;
 import com.hyphenate.util.EasyUtils;
 
 /**
- * chat activity，EaseChatFragment was used {@link #EaseChatFragment}
+ * chat activity，EaseChatFragment was used {@link #EaChatFragment}
  *
  */
 public class ChatActivity extends BaseActivity{
+    private static final String TAG = "ChatActivity";
+
     public static ChatActivity activityInstance;
     private EaseChatFragment chatFragment;
     String toChatUsername;
@@ -53,11 +58,14 @@ public class ChatActivity extends BaseActivity{
     
     @Override
     public void onBackPressed() {
+//        L.e(TAG, "onBackPressed, --1");
         chatFragment.onBackPressed();
+//        L.e(TAG, "onBackPressed, --2");
         if (EasyUtils.isSingleActivity(this)) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            MFGT.gotoMainActivity(ChatActivity.this, true);
+//            L.e(TAG, "onBackPressed, --3");
         }
+//        L.e(TAG, "onBackPressed, --4");
     }
     
     public String getToChatUsername(){

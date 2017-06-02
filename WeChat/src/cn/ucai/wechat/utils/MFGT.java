@@ -53,6 +53,11 @@ public class MFGT {
     public static void gotoMainActivity(Activity activity) {
         startActivity(activity, MainActivity.class);
     }
+    public static void gotoMainActivity(Activity activity, boolean isFromChat) {
+        L.e("MFGT", "gotoMain, activity = "+activity+",  isFromChat = "+isFromChat);
+        startActivity(activity, new Intent(activity, MainActivity.class)
+                .putExtra(I.IS_FROM_CHAT, isFromChat));
+    }
 
     public static void gotoGuide(Activity activity) {
         startActivity(activity, GuideActivity.class);

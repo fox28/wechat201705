@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -452,7 +453,9 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
     }
 
     public void onBackPressed() {
+//        Log.e(TAG, "onBackPressed, --001");
         if (inputMenu.onBackPressed()) {
+//            Log.e(TAG, "onBackPressed, --002");
             getActivity().finish();
             if(chatType == EaseConstant.CHATTYPE_GROUP){
                 EaseAtMessageHelper.get().removeAtMeGroup(toChatUsername);
@@ -462,6 +465,7 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
             	EMClient.getInstance().chatroomManager().leaveChatRoom(toChatUsername);
             }
         }
+//        Log.e(TAG, "onBackPressed, --003");
     }
 
     protected void onChatRoomViewCreation() {

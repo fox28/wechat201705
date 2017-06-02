@@ -36,6 +36,8 @@ import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.domain.EmojiconExampleGroupData;
 import cn.ucai.wechat.domain.RobotUser;
+import cn.ucai.wechat.utils.L;
+import cn.ucai.wechat.utils.MFGT;
 import cn.ucai.wechat.widget.ChatRowVoiceCall;
 import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.ui.EaseChatFragment;
@@ -52,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ChatFragment extends EaseChatFragment implements EaseChatFragmentHelper{
+    private static final String TAG = "ChatFragment";
 
 	// constant start from 11 to avoid conflict with constant in base class
     private static final int ITEM_VIDEO = 11;
@@ -106,11 +109,16 @@ public class ChatFragment extends EaseChatFragment implements EaseChatFragmentHe
 
             @Override
             public void onClick(View v) {
+//                L.e(TAG, "setUpView, onClick, ~~1");
                 if (EasyUtils.isSingleActivity(getActivity())) {
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(getActivity(), MainActivity.class);
+//                    startActivity(intent);
+//                    L.e(TAG, "setUpView, onClick, ~~2");
                 }
+                MFGT.gotoMainActivity(getActivity(), true);
+//                L.e(TAG, "setUpView, onClick, ~~3");
                 onBackPressed();
+//                L.e(TAG, "setUpView, onClick, ~~4");
             }
         });
         ((EaseEmojiconMenu)inputMenu.getEmojiconMenu()).addEmojiconGroup(EmojiconExampleGroupData.getData());
