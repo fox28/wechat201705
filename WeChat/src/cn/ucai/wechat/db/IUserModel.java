@@ -23,4 +23,6 @@ public interface IUserModel {
 
     void addContact(Context context, String username, String cname, OnCompleteListener<String> listener);
 
+    void loadContacts(Context context, String username, OnCompleteListener<String> listener);
+
 }

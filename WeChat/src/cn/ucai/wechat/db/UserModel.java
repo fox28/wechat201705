@@ -88,4 +88,15 @@ public class UserModel implements IUserModel {
                 .execute(listener);
 
     }
+
+    @Override
+    public void loadContacts(Context context, String username, OnCompleteListener<String> listener) {
+        // http://101.251.196.90:8080/SuperWeChatServerV2.0/downloadContactAllList?m_contact_user_name=bbb15907
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_DOWNLOAD_CONTACT_ALL_LIST)
+                .addParam(I.Contact.USER_NAME, username)
+                .targetClass(String.class)
+                .execute(listener);
+
+    }
 }
