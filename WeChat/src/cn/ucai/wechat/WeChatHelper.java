@@ -799,6 +799,11 @@ public class WeChatHelper {
             Map<String, EaseUser> localUsers = WeChatHelper.getInstance().getContactList();
             localUsers.remove(username);
             userDao.deleteContact(username);
+
+            // 仿写删除cache database
+            getAppContactList().remove(username);
+            userDao.deleteAppContact(username);
+
             inviteMessgeDao.deleteMessage(username);
 
             EMClient.getInstance().chatManager().deleteConversation(username, false);

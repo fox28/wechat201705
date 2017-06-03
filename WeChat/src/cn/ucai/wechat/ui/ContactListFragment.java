@@ -20,10 +20,15 @@ import com.hyphenate.chat.EMClient;
 import cn.ucai.wechat.WeChatHelper;
 import cn.ucai.wechat.WeChatHelper.DataSyncListener;
 import cn.ucai.wechat.R;
+import cn.ucai.wechat.db.IUserModel;
 import cn.ucai.wechat.db.InviteMessgeDao;
+import cn.ucai.wechat.db.OnCompleteListener;
 import cn.ucai.wechat.db.UserDao;
+import cn.ucai.wechat.db.UserModel;
 import cn.ucai.wechat.utils.L;
 import cn.ucai.wechat.utils.MFGT;
+import cn.ucai.wechat.utils.Result;
+import cn.ucai.wechat.utils.ResultUtils;
 import cn.ucai.wechat.widget.ContactItemView;
 import cn.ucai.wechat.widget.TitleMenu.ActionItem;
 import cn.ucai.wechat.widget.TitleMenu.TitlePopup;
@@ -62,6 +67,9 @@ public class ContactListFragment extends EaseContactListFragment {
     private ContactItemView applicationItem;
     private InviteMessgeDao inviteMessgeDao;
 
+    ProgressDialog pd;
+    IUserModel model;
+
     @SuppressLint("InflateParams")
     @Override
     protected void initView() {
@@ -91,6 +99,9 @@ public class ContactListFragment extends EaseContactListFragment {
         }
         setContactsMap(m);
         super.refresh();
+        if (model == null) {
+            model = new UserModel();
+        }
         if(inviteMessgeDao == null){
             inviteMessgeDao = new InviteMessgeDao(getActivity());
         }
@@ -243,18 +254,47 @@ public class ContactListFragment extends EaseContactListFragment {
 	public void deleteContact(final User tobeDeleteUser) {
 		String st1 = getResources().getString(R.string.deleting);
 		final String st2 = getResources().getString(R.string.Delete_failed);
-		final ProgressDialog pd = new ProgressDialog(getActivity());
+		ProgressDialog pd = new ProgressDialog(getActivity());
 		pd.setMessage(st1);
 		pd.setCanceledOnTouchOutside(false);
 		pd.show();
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					EMClient.getInstance().contactManager().deleteContact(tobeDeleteUser.getMUserName());
-					// remove user from memory and database 删除环信相关内容
-					UserDao dao = new UserDao(getActivity());
-					dao.deleteContact(tobeDeleteUser.getMUserName());
-					WeChatHelper.getInstance().getContactList().remove(tobeDeleteUser.getMUserName());
+        removeContact(tobeDeleteUser);
+
+    }
+
+    private void removeContact(final User tobeDeleteUser) {
+        final String st2 = getResources().getString(R.string.Delete_failed);
+        model.deleteConatact(getContext(), EMClient.getInstance().getCurrentUser(), tobeDeleteUser.getMUserName(),
+                new OnCompleteListener<String>() {
+                    @Override
+                    public void onSuccess(String jsonStr) {
+                        if (jsonStr != null) {
+                            Result result = ResultUtils.getResultFromJson(jsonStr, User.class);
+                            if (result != null && result.isRetMsg()) {
+                                removeEMContact(tobeDeleteUser);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        pd.dismiss();
+                        Toast.makeText(getActivity(), st2 + "\nfor: "+error, Toast.LENGTH_LONG).show();
+
+                    }
+                });
+    }
+
+    private void removeEMContact(final User tobeDeleteUser) {
+        final String st2 = getResources().getString(R.string.Delete_failed);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    EMClient.getInstance().contactManager().deleteContact(tobeDeleteUser.getMUserName());
+                    // remove user from memory and database 删除环信相关内容
+                    UserDao dao = new UserDao(getActivity());
+                    dao.deleteContact(tobeDeleteUser.getMUserName());
+                    WeChatHelper.getInstance().getContactList().remove(tobeDeleteUser.getMUserName());
 
                     // 删除自己保存（区别于环信原生）的相关内容
                     // remove user from database 删除数据库内容
@@ -263,31 +303,30 @@ public class ContactListFragment extends EaseContactListFragment {
                     WeChatHelper.getInstance().getAppContactList().remove(tobeDeleteUser.getMUserName());
 
                     // 更新显示列表
-					getActivity().runOnUiThread(new Runnable() {
-						public void run() {
-							pd.dismiss();
-							contactList.remove(tobeDeleteUser);
-							contactListLayout.refresh();
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            pd.dismiss();
+                            contactList.remove(tobeDeleteUser);
+                            contactListLayout.refresh();
 
-						}
-					});
+                        }
+                    });
 
-				} catch (final Exception e) {
-					getActivity().runOnUiThread(new Runnable() {
-						public void run() {
-							pd.dismiss();
-							Toast.makeText(getActivity(), st2 + e.getMessage(), Toast.LENGTH_LONG).show();
-						}
-					});
+                } catch (final Exception e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            pd.dismiss();
+                            Toast.makeText(getActivity(), st2 + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
 
-				}
+                }
 
-			}
-		}).start();
+            }
+        }).start();
+    }
 
-	}
-	
-	class ContactSyncListener implements DataSyncListener{
+    class ContactSyncListener implements DataSyncListener{
         @Override
         public void onSyncComplete(final boolean success) {
             EMLog.d(TAG, "on contact list sync success:" + success);
