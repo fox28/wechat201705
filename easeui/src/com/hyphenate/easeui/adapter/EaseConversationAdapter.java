@@ -101,7 +101,7 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
         // get username or group id
         String username = conversation.conversationId();
         
-        if (conversation.getType() == EMConversationType.GroupChat) {
+        if (conversation.getType() == EMConversationType.GroupChat) {// 群聊
             String groupId = conversation.conversationId();
             if(EaseAtMessageHelper.get().hasAtMeMsg(groupId)){
                 holder.motioned.setVisibility(View.VISIBLE);
@@ -112,14 +112,15 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
             holder.avatar.setImageResource(R.drawable.ease_group_icon);
             EMGroup group = EMClient.getInstance().groupManager().getGroup(username);
             holder.name.setText(group != null ? group.getGroupName() : username);
-        } else if(conversation.getType() == EMConversationType.ChatRoom){
+        } else if(conversation.getType() == EMConversationType.ChatRoom){// 聊天室
             holder.avatar.setImageResource(R.drawable.ease_group_icon);
             EMChatRoom room = EMClient.getInstance().chatroomManager().getChatRoom(username);
             holder.name.setText(room != null && !TextUtils.isEmpty(room.getName()) ? room.getName() : username);
             holder.motioned.setVisibility(View.GONE);
         }else {
-            EaseUserUtils.setUserAvatar(getContext(), username, holder.avatar);
-            EaseUserUtils.setUserNick(username, holder.name);
+            // 会话列表显示头像、昵称
+            EaseUserUtils.setAppUserAvatar(getContext(), username, holder.avatar);
+            EaseUserUtils.setAppUserNick(username, holder.name);
             holder.motioned.setVisibility(View.GONE);
         }
 
