@@ -1294,9 +1294,11 @@ public class WeChatHelper {
                 public void onSuccess(String jsonStr) {
                     if (jsonStr != null) {
                         Result result = ResultUtils.getListResultFromJson(jsonStr, User.class);
+                        L.e(TAG, "asyncFetchAppContactsFromServer, onSuccess,, jsonStr = "+jsonStr);
+
                         if (result != null && result.isRetMsg()) {
                             List<User> list = (List<User>) result.getRetData();
-
+                            L.e(TAG, "asyncFetchAppContactsFromServer, onSuccess, list = "+list.size());
                             Map<String, User> userlist = new HashMap<String, User>();
                             for (User user : list) {
 //                                EaseCommonUtils.setAppUserInitialLetter(user);
@@ -1305,10 +1307,12 @@ public class WeChatHelper {
                             // save the contact list to cache
                             getAppContactList().clear();
                             getAppContactList().putAll(userlist);
+                            L.e(TAG, "asyncFetchAppContactsFromServer, save the contact list to cache = "+userlist.size());
                             // save the contact list to database
                             UserDao dao = new UserDao(appContext);
                             List<User> users = new ArrayList<User>(userlist.values());
                             dao.saveAppContactList(users);
+                            L.e(TAG, "asyncFetchAppContactsFromServer, save the contact list to database = "+users.size());
                         }
                     }
                 }
@@ -1542,8 +1546,15 @@ public class WeChatHelper {
      * @return
      */
     public Map<String, User> getAppContactList() {
-        if (isLoggedIn() && appContactList == null) {
+        L.e(TAG, "getAppContactList, start ... ");
+        if ((isLoggedIn() && appContactList == null )|| appContactList.size() == 0) {
+            L.e(TAG, "getAppContactList(),,, go to databases get userlist");
             appContactList = mWeChatModel.getAppContactList();
+        }
+        if (appContactList != null) {
+            L.e(TAG, "getAppContactList()... appContactList = "+appContactList.size());
+            L.e(TAG, "getAppContactList()... appContactList.containsKey(EMClient.getInstance().getCurrentUser()) = "
+                    +appContactList.containsKey(EMClient.getInstance().getCurrentUser()));
         }
 
         // return a empty non-null object to avoid app crash

@@ -22,6 +22,7 @@ import cn.ucai.wechat.WeChatHelper.DataSyncListener;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.db.InviteMessgeDao;
 import cn.ucai.wechat.db.UserDao;
+import cn.ucai.wechat.utils.L;
 import cn.ucai.wechat.utils.MFGT;
 import cn.ucai.wechat.widget.ContactItemView;
 import cn.ucai.wechat.widget.TitleMenu.ActionItem;
@@ -83,6 +84,7 @@ public class ContactListFragment extends EaseContactListFragment {
     @Override
     public void refresh() {
         Map<String, User> m = WeChatHelper.getInstance().getAppContactList();
+        L.e(TAG, "refresh(), m = "+m.size() );
         if (m instanceof Hashtable<?, ?>) {
             //noinspection unchecked
             m = (Map<String, User>) ((Hashtable<String, User>)m).clone();
