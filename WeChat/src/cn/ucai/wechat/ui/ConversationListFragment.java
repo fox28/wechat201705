@@ -20,12 +20,15 @@ import com.hyphenate.chat.EMMessage;
 import cn.ucai.wechat.Constant;
 import cn.ucai.wechat.R;
 import cn.ucai.wechat.db.InviteMessgeDao;
+import cn.ucai.wechat.utils.L;
+
 import com.hyphenate.easeui.model.EaseAtMessageHelper;
 import com.hyphenate.easeui.ui.EaseConversationListFragment;
 import com.hyphenate.easeui.widget.EaseConversationList.EaseConversationListHelper;
 import com.hyphenate.util.NetUtils;
 
 public class ConversationListFragment extends EaseConversationListFragment{
+    private static final String TAG = "ConversationListFragmen";
 
     private TextView errorText;
 
@@ -117,14 +120,18 @@ public class ConversationListFragment extends EaseConversationListFragment{
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        L.e(TAG, "onContextItemSelected, item = "+item);
         boolean deleteMessage = false;
-        if (item.getItemId() == R.id.delete_message) {
+        if (item.getItemId() == R.id.delete_message) {// 判断id， 删除消息
             deleteMessage = true;
-        } else if (item.getItemId() == R.id.delete_conversation) {
+        } else if (item.getItemId() == R.id.delete_conversation) {// 判断id， 删除会话列表
             deleteMessage = false;
+        } else {
+            return false;
         }
-    	EMConversation tobeDeleteCons = conversationListView.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
+        EMConversation tobeDeleteCons = conversationListView.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
     	if (tobeDeleteCons == null) {
+            L.e(TAG, "onContextItemSelected, tobeDeleteCons = "+tobeDeleteCons);
     	    return true;
     	}
         if(tobeDeleteCons.getType() == EMConversationType.GroupChat){
@@ -142,7 +149,7 @@ public class ConversationListFragment extends EaseConversationListFragment{
 
         // update unread count
         ((MainActivity) getActivity()).updateUnreadLabel();
-        return true;
+        return false;
     }
 
 }

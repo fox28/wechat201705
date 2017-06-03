@@ -201,20 +201,27 @@ public class ContactListFragment extends EaseContactListFragment {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-	    toBeProcessUser = (EaseUser) listView.getItemAtPosition(((AdapterContextMenuInfo) menuInfo).position);
-	    toBeProcessUsername = toBeProcessUser.getUsername();
+	    toBeProcessUser = (User) listView.getItemAtPosition(((AdapterContextMenuInfo) menuInfo).position);
+	    toBeProcessUsername = toBeProcessUser.getMUserName();
 		getActivity().getMenuInflater().inflate(R.menu.em_context_contact_list, menu);
 	}
 
+    /**
+     * 删除联系人
+     * @param item 选择的菜单项
+     * @return
+     */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+        L.e(TAG, "onContextItemSelected, start...");
 		if (item.getItemId() == R.id.delete_contact) {
 			try {
+                L.e(TAG, "onContextItemSelected, pre- toBeProcessUser = "+toBeProcessUser);
                 // delete contact
                 deleteContact(toBeProcessUser);
                 // remove invitation message
                 InviteMessgeDao dao = new InviteMessgeDao(getActivity());
-                dao.deleteMessage(toBeProcessUser.getUsername());
+                dao.deleteMessage(toBeProcessUser.getMUserName());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -233,7 +240,7 @@ public class ContactListFragment extends EaseContactListFragment {
 	 * 
 	 * @param tobeDeleteUser
 	 */
-	public void deleteContact(final EaseUser tobeDeleteUser) {
+	public void deleteContact(final User tobeDeleteUser) {
 		String st1 = getResources().getString(R.string.deleting);
 		final String st2 = getResources().getString(R.string.Delete_failed);
 		final ProgressDialog pd = new ProgressDialog(getActivity());
@@ -243,11 +250,19 @@ public class ContactListFragment extends EaseContactListFragment {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					EMClient.getInstance().contactManager().deleteContact(tobeDeleteUser.getUsername());
-					// remove user from memory and database
+					EMClient.getInstance().contactManager().deleteContact(tobeDeleteUser.getMUserName());
+					// remove user from memory and database 删除环信相关内容
 					UserDao dao = new UserDao(getActivity());
-					dao.deleteContact(tobeDeleteUser.getUsername());
-					WeChatHelper.getInstance().getContactList().remove(tobeDeleteUser.getUsername());
+					dao.deleteContact(tobeDeleteUser.getMUserName());
+					WeChatHelper.getInstance().getContactList().remove(tobeDeleteUser.getMUserName());
+
+                    // 删除自己保存（区别于环信原生）的相关内容
+                    // remove user from database 删除数据库内容
+                    dao.deleteAppContact(tobeDeleteUser.getMUserName());
+                    // remove user from memory 删除内存相关内容
+                    WeChatHelper.getInstance().getAppContactList().remove(tobeDeleteUser.getMUserName());
+
+                    // 更新显示列表
 					getActivity().runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
@@ -256,6 +271,7 @@ public class ContactListFragment extends EaseContactListFragment {
 
 						}
 					});
+
 				} catch (final Exception e) {
 					getActivity().runOnUiThread(new Runnable() {
 						public void run() {
