@@ -88,11 +88,15 @@ public class MFGT {
 
     public static void gotoFriendProfileActivity(Activity activity, User user) {
         startActivity(activity, new Intent(activity, FriendProfileActivity.class)
-                .putExtra(I.User.USER_NAME, user));
+                .putExtra(I.User.TABLE_NAME, user));
     }
     public static void gotoFriendProfileActivity(Context context, InviteMessage msg) {
         startActivity((Activity)context, new Intent(context, FriendProfileActivity.class)
                 .putExtra(I.User.NICK, msg));
+    }
+    public static void gotoFriendProfileActivity(Context context, String uesrname) {
+        startActivity((Activity)context, new Intent(context, FriendProfileActivity.class)
+                .putExtra(I.User.USER_NAME, uesrname));
     }
 
     public static void gotoSendMsgForAddFriend(Activity activity, String userName) {

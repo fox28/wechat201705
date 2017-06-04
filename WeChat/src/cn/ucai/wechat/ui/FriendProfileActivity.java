@@ -70,21 +70,25 @@ public class FriendProfileActivity extends BaseActivity {
 
     private void initData() {
         userModel = new UserModel();
-        user = (User) getIntent().getSerializableExtra(I.User.USER_NAME);
-        if (user != null) {
-            showFriendUserInfo();
-        } else {
+        user = (User) getIntent().getSerializableExtra(I.User.TABLE_NAME);
+
+        if (user==null) {
             msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
             if (msg != null) {
                 user = new User(msg.getFrom());
-                user.setAvatar(msg.getAvatar());
                 user.setMUserNick(msg.getNick());
-
-                showFriendUserInfo();
-            } else {
-                    MFGT.finish(FriendProfileActivity.this);
+                user.setAvatar(msg.getAvatar());
             }
         }
+        if (user == null) {
+            MFGT.finish(FriendProfileActivity.this);
+        } else {
+            showFriendUserInfo();
+            // 从服务器异步加载用户的最新信息，填充到好友列表或者新的朋友列表
+            syncFriendUserInfo();
+        }
+
+
     }
 
     /**
@@ -92,7 +96,7 @@ public class FriendProfileActivity extends BaseActivity {
      */
     private void showFriendUserInfo() {
         boolean isFriend = WeChatHelper.getInstance().getAppContactList().containsKey(user.getMUserName());
-        if (isFriend) {// 当查到的用户是好友时，更新好友的数据库、内存
+        if (isFriend && user.getMUserNick()!=null) {// 当查到的用户是好友时，更新好友的数据库、内存
 
             // getAppContactList().put(user.getMUserName(), user);这是存到内存？？？
             WeChatHelper.getInstance().saveAppContact(user);
@@ -104,7 +108,7 @@ public class FriendProfileActivity extends BaseActivity {
         showButton(isFriend);
 
         // 从服务器异步加载用户的最新信息，填充到好友列表或者新的朋友列表
-        syncFriendUserInfo();
+//        syncFriendUserInfo();
     }
 
     /**
@@ -155,11 +159,13 @@ public class FriendProfileActivity extends BaseActivity {
                                 InviteMessgeDao dao = new InviteMessgeDao(FriendProfileActivity.this);
                                 dao.updateMessage(msg.getId(), values);
 
-                                // 更新完成后，下次今日好友列表，看到是最新头像。下次、下次、下次
+                                // 更新完成后，下次今日好友列表，看到是最新头像。下次、下次、下次———解决方法、重新显示
                             } else if (isFriend) {
                                 // update user
                                 WeChatHelper.getInstance().saveAppContact(u);
                             }
+                            user = u;
+                            showFriendUserInfo();
                         }
                     }
                 }
