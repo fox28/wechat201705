@@ -1,12 +1,15 @@
 package cn.ucai.wechat.ui;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseTitleBar;
@@ -173,6 +176,18 @@ public class FriendProfileActivity extends BaseActivity {
     public void sendMsg(){
         finish();
         MFGT.gotoChat(FriendProfileActivity.this, user.getMUserName());
+    }
+
+    @OnClick(R.id.btn_send_video)
+    public void sendVideo(){
+        if (!EMClient.getInstance().isConnected())
+            Toast.makeText(FriendProfileActivity.this, R.string.not_connect_to_server, Toast.LENGTH_SHORT).show();
+        else {
+            startActivity(new Intent(FriendProfileActivity.this, VideoCallActivity.class)
+                    .putExtra("username", user.getMUserName())
+                    .putExtra("isComingCall", false));
+            // videoCallBtn.setEnabled(false);
+        }
     }
 
 }
