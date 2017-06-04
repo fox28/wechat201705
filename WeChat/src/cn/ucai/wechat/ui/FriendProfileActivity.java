@@ -116,9 +116,15 @@ public class FriendProfileActivity extends BaseActivity {
      * @param isFriend
      */
     private void showButton(boolean isFriend) {
-        mBtnAddContact.setVisibility(isFriend?  View.GONE:      View.VISIBLE);
-        mBtnSendMsg.setVisibility(isFriend?     View.VISIBLE:   View.GONE);
-        mBtnSendVideo.setVisibility(isFriend?   View.VISIBLE:   View.GONE);
+        if (user.getMUserName().equals(EMClient.getInstance().getCurrentUser())) {
+            mBtnAddContact.setVisibility(View.GONE);
+            mBtnSendMsg.setVisibility(View.GONE);
+            mBtnSendVideo.setVisibility(View.GONE);
+        } else {
+            mBtnAddContact.setVisibility(isFriend?  View.GONE:      View.VISIBLE);
+            mBtnSendMsg.setVisibility(isFriend?     View.VISIBLE:   View.GONE);
+            mBtnSendVideo.setVisibility(isFriend?   View.VISIBLE:   View.GONE);
+        }
     }
 
     private void initView() {
