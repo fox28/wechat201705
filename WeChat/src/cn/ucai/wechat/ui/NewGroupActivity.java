@@ -29,7 +29,10 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroupManager.EMGroupOptions;
 import com.hyphenate.chat.EMGroupManager.EMGroupStyle;
 import cn.ucai.wechat.R;
+import cn.ucai.wechat.utils.MFGT;
+
 import com.hyphenate.easeui.widget.EaseAlertDialog;
+import com.hyphenate.easeui.widget.EaseTitleBar;
 import com.hyphenate.exceptions.HyphenateException;
 
 public class NewGroupActivity extends BaseActivity {
@@ -39,6 +42,7 @@ public class NewGroupActivity extends BaseActivity {
 	private CheckBox publibCheckBox;
 	private CheckBox memberCheckbox;
 	private TextView secondTextView;
+	private EaseTitleBar mTitleBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +53,9 @@ public class NewGroupActivity extends BaseActivity {
 		publibCheckBox = (CheckBox) findViewById(R.id.cb_public);
 		memberCheckbox = (CheckBox) findViewById(R.id.cb_member_inviter);
 		secondTextView = (TextView) findViewById(R.id.second_desc);
-		
+		mTitleBar = (EaseTitleBar) findViewById(R.id.title_bar);
+		initBackListener();
+
 		publibCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 		    @Override
@@ -60,6 +66,15 @@ public class NewGroupActivity extends BaseActivity {
                     secondTextView.setText(R.string.Open_group_members_invited);
 		        }
 		    }
+		});
+	}
+
+	private void initBackListener() {
+		mTitleBar.setLeftLayoutClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MFGT.finish(NewGroupActivity.this);
+			}
 		});
 	}
 
@@ -129,7 +144,4 @@ public class NewGroupActivity extends BaseActivity {
 		}
 	}
 
-	public void back(View view) {
-		finish();
-	}
 }

@@ -1,50 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#eee"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:background="#eee"
+              android:orientation="vertical">
 
-    <RelativeLayout
+    <com.hyphenate.easeui.widget.EaseTitleBar
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_top_bar"
-        android:background="@color/top_bar_normal_bg"
-        android:gravity="center_vertical" >
-
-        <LinearLayout
-            android:layout_width="45dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/ease_common_tab_bg"
-            android:onClick="back" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="9dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/em_mm_title_back" />
-        </LinearLayout>
-
-        <TextView
+        android:layout_height="wrap_content"
+        app:titleBarLeftImage="@drawable/em_mm_title_back"
+        app:titleBarTitle="@string/The_new_group_chat"
+        >
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/The_new_group_chat"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
-
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/btn_search"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:background="@drawable/ease_common_tab_bg"
-            android:onClick="save"
             android:text="@string/button_save"
             android:textColor="#fff"
-            android:textSize="18sp" />
-    </RelativeLayout>
+            android:textSize="16sp"
+            android:onClick="save"
+            />
+    </com.hyphenate.easeui.widget.EaseTitleBar>
+
 
     <EditText
         android:id="@+id/edit_group_name"
