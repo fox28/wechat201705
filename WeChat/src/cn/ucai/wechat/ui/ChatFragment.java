@@ -97,7 +97,7 @@ public class ChatFragment extends EaseChatFragment implements EaseChatFragmentHe
     @Override
     protected void setUpView() {
         setChatFragmentListener(this);
-        if (chatType == Constant.CHATTYPE_SINGLE) { 
+        if (chatType == Constant.CHATTYPE_SINGLE) { // 单聊 chatType继承EaseChatFragment
             Map<String,RobotUser> robotMap = WeChatHelper.getInstance().getRobotList();
             if(robotMap!=null && robotMap.containsKey(toChatUsername)){
                 isRobot = true;
