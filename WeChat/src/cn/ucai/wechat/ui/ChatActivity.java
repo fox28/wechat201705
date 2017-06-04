@@ -48,7 +48,7 @@ public class ChatActivity extends BaseActivity{
     	// make sure only one chat activity is opened
         String username = intent.getStringExtra("userId");
         if (toChatUsername.equals(username))
-            super.onNewIntent(intent);
+            super.onNewIntent(intent); // Activity又将intent传送出去、最终到EaseChatFragment
         else {
             finish();
             startActivity(intent);
