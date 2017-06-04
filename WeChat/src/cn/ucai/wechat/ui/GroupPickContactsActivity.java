@@ -55,10 +55,10 @@ public class GroupPickContactsActivity extends BaseActivity {
 		setContentView(R.layout.em_activity_group_pick_contacts);
 
 		String groupId = getIntent().getStringExtra("groupId");
-		if (groupId == null) {// create new group
+		if (groupId == null) {// create new group groupId为空创建群组
 			isCreatingNewGroup = true;
 		} else {
-			// get members of the group
+			// get members of the group 已创建的群组，直接拿到群组成员
 			EMGroup group = EMClient.getInstance().groupManager().getGroup(groupId);
 			existMembers = group.getMembers();
 			existMembers.add(group.getOwner());
@@ -72,10 +72,11 @@ public class GroupPickContactsActivity extends BaseActivity {
 			if (!user.getMUserName().equals(Constant.NEW_FRIENDS_USERNAME)
 					& !user.getMUserName().equals(Constant.GROUP_USERNAME)
 					& !user.getMUserName().equals(Constant.CHAT_ROOM)
-					& !user.getMUserName().equals(Constant.CHAT_ROBOT))
+					& !user.getMUserName().equals(Constant.CHAT_ROBOT)
+					& !user.getMUserName().equals(EMClient.getInstance().getCurrentUser()))
 				alluserList.add(user);
 		}
-		// sort the list
+		// sort the list 上面是过滤filter,这里是排序
         Collections.sort(alluserList, new Comparator<User>() {
 
             @Override
