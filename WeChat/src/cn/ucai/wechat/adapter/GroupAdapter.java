@@ -27,11 +27,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hyphenate.chat.EMGroup;
+import com.hyphenate.easeui.domain.Group;
+import com.hyphenate.easeui.utils.EaseUserUtils;
+
 import cn.ucai.wechat.R;
 
 import java.util.List;
 
 public class GroupAdapter extends ArrayAdapter<EMGroup> {
+	private static final String TAG = "GroupAdapter";
 
 	private LayoutInflater inflater;
 	private String newGroup;
@@ -106,12 +110,14 @@ public class GroupAdapter extends ArrayAdapter<EMGroup> {
 			((TextView) convertView.findViewById(R.id.name)).setText(addPublicGroup);
 			((TextView) convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
 
-		} else {
+		} else {// 通讯录|群组列表
 			if (convertView == null) {
 				convertView = inflater.inflate(R.layout.em_row_group, parent, false);
 			}
+			// getItem(position-3).getGroupName()  与 getItem(position-3) 结果一样，都是群组名字
 			((TextView) convertView.findViewById(R.id.name)).setText(getItem(position - 3).getGroupName());
-
+			EaseUserUtils.showGroupAvatar(getContext(), Group.getAvatar(getItem(position-3).getGroupId()),
+					(ImageView) convertView.findViewById(R.id.avatar));
 		}
 
 		return convertView;

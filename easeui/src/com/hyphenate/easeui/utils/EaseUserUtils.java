@@ -93,7 +93,7 @@ public class EaseUserUtils {
     }
 
     public static void showAvatar(Context context, String avatarPath, ImageView imageView) {
-        if (avatarPath!=null) {
+        if (avatarPath != null) {
             try {
                 int avatarResId = Integer.parseInt(avatarPath);
                 Glide.with(context).load(avatarResId).into(imageView);
@@ -101,6 +101,22 @@ public class EaseUserUtils {
                 //use default avatar
                 Glide.with(context).load(avatarPath).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_hd_avatar).into(imageView);
             }
+        } else {
+            Glide.with(context).load(R.drawable.default_hd_avatar).into(imageView);
+        }
+    }
+    public static void showGroupAvatar(Context context, String avatarPath, ImageView imageView) {
+        if (avatarPath != null) {
+            try {
+                int avatarResId = Integer.parseInt(avatarPath);
+                Glide.with(context).load(avatarResId).into(imageView);
+            } catch (Exception e) {
+                //use default avatar
+                Glide.with(context).load(avatarPath).diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.em_group_icon).into(imageView);
+            }
+        } else {// 相对于if(avatarPath != null)
+            Glide.with(context).load(R.drawable.em_group_icon).into(imageView);
         }
     }
 
