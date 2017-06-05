@@ -31,6 +31,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,9 +64,6 @@ import java.io.IOException;
 public class NewGroupActivity extends BaseActivity {
     private static final String TAG = "NewGroupActivity";
 
-    private static final int REQUESTCODE_PICK = 1;
-    private static final int REQUESTCODE_CUTTING = 2;
-
 	private EditText groupNameEditText;
 	private ProgressDialog progressDialog;
 	private EditText introductionEditText;
@@ -73,9 +72,12 @@ public class NewGroupActivity extends BaseActivity {
 	private TextView secondTextView;
 	private EaseTitleBar mTitleBar;
 
+    LinearLayout groupIconLayout;
+    ImageView ivIcon;
+
 	private IGroupModel model;// 已实例化
     private String avatarName;
-    File groupFile;
+    File avatarFile;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,23 +89,37 @@ public class NewGroupActivity extends BaseActivity {
 		memberCheckbox = (CheckBox) findViewById(R.id.cb_member_inviter);
 		secondTextView = (TextView) findViewById(R.id.second_desc);
 		mTitleBar = (EaseTitleBar) findViewById(R.id.title_bar);
-		initBackListener();
+
+        groupIconLayout = (LinearLayout) findViewById(R.id.layout_group_icon);
+        ivIcon = (ImageView) findViewById(R.id.iv_avatar);
+        initBackListener();
 		model = new GroupModel();
 
-		publibCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        setListener();
 
-		    @Override
-		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		        if(isChecked){
-		            secondTextView.setText(R.string.join_need_owner_approval);
-		        }else{
-                    secondTextView.setText(R.string.Open_group_members_invited);
-		        }
-		    }
-		});
 	}
 
-	private void initBackListener() {
+    private void setListener() {
+        publibCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    secondTextView.setText(R.string.join_need_owner_approval);
+                }else{
+                    secondTextView.setText(R.string.Open_group_members_invited);
+                }
+            }
+        });
+
+        groupIconLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadHeadPhoto();
+            }
+        });
+    }
+
+    private void initBackListener() {
 		mTitleBar.setLeftLayoutClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -121,21 +137,37 @@ public class NewGroupActivity extends BaseActivity {
 		    new EaseAlertDialog(this, R.string.Group_name_cannot_be_empty).show();
 		} else {
 			// select from contact list
-			startActivityForResult(new Intent(this, GroupPickContactsActivity.class).putExtra("groupName", name), 0);
+			startActivityForResult(new Intent(this, GroupPickContactsActivity.class)
+                    .putExtra("groupName", name), I.REQUEST_CODE_PICK_CONTACT);
 		}
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case I.REQUEST_CODE_PICK_PIC:
+                if (data==null||data.getData()==null) {
+                    return;
+                }
+                startPhotoZoom(data.getData());
+                break;
+            case I.REQUEST_CODE_CUTTING:
+                if (data!=null) {
+                    setPicToView(data);
+                }
+                break;
+            case I.REQUEST_CODE_PICK_CONTACT:
+                if (resultCode == RESULT_OK) {
+                    // new group
+                    showDialog();
+                    createEMGroup(data);
+                }
+                break;
+            default:
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
 
-		if (resultCode == RESULT_OK) {
-			//new group
-            showDialog();
-
-            createEMGroup(data);
-
-		}
 	}
 
     private void createEMGroup(final Intent data) {
@@ -179,11 +211,10 @@ public class NewGroupActivity extends BaseActivity {
 
     private void createAppGroup(EMGroup emGroup) {
         if(emGroup!=null){
-            File file = null;
             if (emGroup.getGroupId() != null) {
                 model.newGroup(NewGroupActivity.this, emGroup.getGroupId(), emGroup.getGroupName(),
                         emGroup.getDescription(), emGroup.getOwner(), emGroup.isPublic(), emGroup.isAllowInvites(),
-                        file, new OnCompleteListener<String>() {
+                        avatarFile, new OnCompleteListener<String>() {
                             @Override
                             public void onSuccess(String jsonStr) {
                                 L.e(TAG, "createAppGroup|onSuccess, jsonStr"+jsonStr);
@@ -248,7 +279,7 @@ public class NewGroupActivity extends BaseActivity {
                             case 1:// 上传本地图片
                                 Intent pickIntent = new Intent(Intent.ACTION_PICK, null);
                                 pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                                startActivityForResult(pickIntent, REQUESTCODE_PICK);
+                                startActivityForResult(pickIntent, I.REQUEST_CODE_PICK_PIC);
                                 break;
                             default:
                                 break;
@@ -263,7 +294,7 @@ public class NewGroupActivity extends BaseActivity {
      * 保存上传并截取的照片
      * @param picdata
      */
-    private File getGroupFile(Intent picdata) {
+    private void setPicToView(Intent picdata) {
         L.e(TAG, "setPicToView, picdata = "+picdata);
         Bundle extras = picdata.getExtras();
         L.e(TAG, "setPicToView, extras = "+extras);
@@ -271,10 +302,9 @@ public class NewGroupActivity extends BaseActivity {
             Bitmap bitmap = extras.getParcelable("data");
             L.e(TAG, "setPicToView, bitmap = "+bitmap);
             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-
-            return saveBitmapFile(bitmap);
+            ivIcon.setImageDrawable(drawable);// 显示图片
+            saveBitmapFile(bitmap); // 保存图片
         }
-        return null;
     }
 
 
@@ -288,7 +318,7 @@ public class NewGroupActivity extends BaseActivity {
         intent.putExtra("outputY", 300);
         intent.putExtra("return-data", true);
         intent.putExtra("noFaceDetection", true);
-        startActivityForResult(intent, REQUESTCODE_CUTTING);
+        startActivityForResult(intent, I.REQUEST_CODE_CUTTING);
     }
 
     /**
@@ -297,10 +327,9 @@ public class NewGroupActivity extends BaseActivity {
      * @return
      */
     private String getAvatarName() {
-//        avatarName = group.getGroupName() + System.currentTimeMillis();
-//        L.e(TAG, "avatarName = " + avatarName);
-//        return avatarName;
-        return null;// 待修改
+        avatarName = I.AVATAR_TYPE_GROUP_PATH + System.currentTimeMillis();
+        L.e(TAG, "avatarName = " + avatarName);
+        return avatarName;
     }
     /**
      * 返回头像保存在sd卡的位置:
@@ -324,12 +353,12 @@ public class NewGroupActivity extends BaseActivity {
      * @param bitmap
      * @return
      */
-    private File saveBitmapFile(Bitmap bitmap) {
+    private void saveBitmapFile(Bitmap bitmap) {
         if (bitmap != null) {
             String imagePath = getAvatarPath(NewGroupActivity.this, I.AVATAR_TYPE_USER_PATH) +
                     "/" + getAvatarName() + ".jpg";
             File file = new File(imagePath); // 将要保存图片的途径
-            L.e(TAG, "file = " + file.getAbsolutePath());
+            L.e(TAG, "saveBitmapFile, file = " + file.getAbsolutePath());
             try {
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
@@ -338,9 +367,8 @@ public class NewGroupActivity extends BaseActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return file;
+            avatarFile = file;
         }
-        return null;
     }
 
 }
