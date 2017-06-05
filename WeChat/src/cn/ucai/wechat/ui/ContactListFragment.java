@@ -92,7 +92,6 @@ public class ContactListFragment extends EaseContactListFragment {
     @Override
     public void refresh() {
         Map<String, User> m = WeChatHelper.getInstance().getAppContactList();
-        L.e(TAG, "refresh(), m = "+m.size() );
         if (m instanceof Hashtable<?, ?>) {
             //noinspection unchecked
             m = (Map<String, User>) ((Hashtable<String, User>)m).clone();
@@ -227,7 +226,6 @@ public class ContactListFragment extends EaseContactListFragment {
         L.e(TAG, "onContextItemSelected, start...");
 		if (item.getItemId() == R.id.delete_contact) {
 			try {
-                L.e(TAG, "onContextItemSelected, pre- toBeProcessUser = "+toBeProcessUser);
                 // delete contact
                 deleteContact(toBeProcessUser);
                 // remove invitation message
