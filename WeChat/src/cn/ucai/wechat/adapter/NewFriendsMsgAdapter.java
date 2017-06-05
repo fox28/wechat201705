@@ -16,6 +16,7 @@ package cn.ucai.wechat.adapter;
 import java.util.List;
 
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.domain.Group;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 
 import cn.ucai.wechat.R;
@@ -89,15 +90,18 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 		    
 			if(msg.getGroupId() != null){ // show group name
 				holder.groupContainer.setVisibility(View.VISIBLE);
-				holder.groupname.setText(msg.getGroupName());
+				holder.groupname.setText(msg.getGroupId());
+				holder.name.setText(msg.getGroupName());
+				EaseUserUtils.showGroupAvatar(context, Group.getAvatar(msg.getGroupId()),holder.avator);
 			} else{
 				holder.groupContainer.setVisibility(View.GONE);
+				holder.name.setText(msg.getNick());
+				EaseUserUtils.showAvatar(context, msg.getAvatar(),holder.avator);
 			}
 			
 			holder.reason.setText(msg.getReason());
 //			holder.name.setText(msg.getFrom());
-			holder.name.setText(msg.getNick());
-			EaseUserUtils.showAvatar(context, msg.getAvatar(),holder.avator);
+
 
 			// holder.time.setText(DateUtils.getTimestampString(new
 			// Date(msg.getTime())));
