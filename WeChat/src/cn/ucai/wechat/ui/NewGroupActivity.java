@@ -13,9 +13,18 @@
  */
 package cn.ucai.wechat.ui;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -26,16 +35,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupManager.EMGroupOptions;
 import com.hyphenate.chat.EMGroupManager.EMGroupStyle;
-import cn.ucai.wechat.R;
-import cn.ucai.wechat.utils.MFGT;
 
+import cn.ucai.wechat.I;
+import cn.ucai.wechat.R;
+import cn.ucai.wechat.db.GroupModel;
+import cn.ucai.wechat.db.IGroupModel;
+import cn.ucai.wechat.db.OnCompleteListener;
+import cn.ucai.wechat.utils.L;
+import cn.ucai.wechat.utils.MFGT;
+import cn.ucai.wechat.utils.Result;
+import cn.ucai.wechat.utils.ResultUtils;
+
+import com.hyphenate.easeui.domain.Group;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
 import com.hyphenate.easeui.widget.EaseTitleBar;
 import com.hyphenate.exceptions.HyphenateException;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class NewGroupActivity extends BaseActivity {
+    private static final String TAG = "NewGroupActivity";
+
+    private static final int REQUESTCODE_PICK = 1;
+    private static final int REQUESTCODE_CUTTING = 2;
+
 	private EditText groupNameEditText;
 	private ProgressDialog progressDialog;
 	private EditText introductionEditText;
@@ -43,6 +72,10 @@ public class NewGroupActivity extends BaseActivity {
 	private CheckBox memberCheckbox;
 	private TextView secondTextView;
 	private EaseTitleBar mTitleBar;
+
+	private IGroupModel model;// 已实例化
+    private String avatarName;
+    File groupFile;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +88,7 @@ public class NewGroupActivity extends BaseActivity {
 		secondTextView = (TextView) findViewById(R.id.second_desc);
 		mTitleBar = (EaseTitleBar) findViewById(R.id.title_bar);
 		initBackListener();
+		model = new GroupModel();
 
 		publibCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -94,54 +128,219 @@ public class NewGroupActivity extends BaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		String st1 = getResources().getString(R.string.Is_to_create_a_group_chat);
-		final String st2 = getResources().getString(R.string.Failed_to_create_groups);
+
 		if (resultCode == RESULT_OK) {
 			//new group
-			progressDialog = new ProgressDialog(this);
-			progressDialog.setMessage(st1);
-			progressDialog.setCanceledOnTouchOutside(false);
-			progressDialog.show();
+            showDialog();
 
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					final String groupName = groupNameEditText.getText().toString().trim();
-					String desc = introductionEditText.getText().toString();
-					String[] members = data.getStringArrayExtra("newmembers");
-					try {
-						EMGroupOptions option = new EMGroupOptions();
-					    option.maxUsers = 200;
-						option.inviteNeedConfirm = true;
-					    
-					    String reason = NewGroupActivity.this.getString(R.string.invite_join_group);
-					    reason  = EMClient.getInstance().getCurrentUser() + reason + groupName;
-					    
-						if(publibCheckBox.isChecked()){
-						    option.style = memberCheckbox.isChecked() ? EMGroupStyle.EMGroupStylePublicJoinNeedApproval : EMGroupStyle.EMGroupStylePublicOpenJoin;
-						}else{
-						    option.style = memberCheckbox.isChecked()?EMGroupStyle.EMGroupStylePrivateMemberCanInvite:EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
-						}
-                        EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
-						runOnUiThread(new Runnable() {
-							public void run() {
-								progressDialog.dismiss();
-								setResult(RESULT_OK);
-								finish();
-							}
-						});
-					} catch (final HyphenateException e) {
-						runOnUiThread(new Runnable() {
-							public void run() {
-								progressDialog.dismiss();
-								Toast.makeText(NewGroupActivity.this, st2 + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-							}
-						});
-					}
-					
-				}
-			}).start();
+            createEMGroup(data);
+
 		}
 	}
+
+    private void createEMGroup(final Intent data) {
+        final String st2 = getResources().getString(R.string.Failed_to_create_groups);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String groupName = groupNameEditText.getText().toString().trim();
+                String desc = introductionEditText.getText().toString();
+                String[] members = data.getStringArrayExtra("newmembers");
+                try {
+                    EMGroupOptions option = new EMGroupOptions();
+                    option.maxUsers = 200;
+                    option.inviteNeedConfirm = true;
+
+                    String reason = NewGroupActivity.this.getString(R.string.invite_join_group);
+                    reason  = EMClient.getInstance().getCurrentUser() + reason + groupName;
+
+                    if(publibCheckBox.isChecked()){
+                        option.style = memberCheckbox.isChecked() ? EMGroupStyle.EMGroupStylePublicJoinNeedApproval : EMGroupStyle.EMGroupStylePublicOpenJoin;
+                    }else{
+                        option.style = memberCheckbox.isChecked()?EMGroupStyle.EMGroupStylePrivateMemberCanInvite:EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
+                    }
+
+                    EMGroup emGroup = EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
+
+                    createAppGroup(emGroup);
+
+                } catch (final HyphenateException e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            progressDialog.dismiss();
+                            Toast.makeText(NewGroupActivity.this, st2 + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+
+            }
+        }).start();
+    }
+
+    private void createAppGroup(EMGroup emGroup) {
+        if(emGroup!=null){
+            File file = null;
+            if (emGroup.getGroupId() != null) {
+                model.newGroup(NewGroupActivity.this, emGroup.getGroupId(), emGroup.getGroupName(),
+                        emGroup.getDescription(), emGroup.getOwner(), emGroup.isPublic(), emGroup.isAllowInvites(),
+                        file, new OnCompleteListener<String>() {
+                            @Override
+                            public void onSuccess(String jsonStr) {
+                                L.e(TAG, "createAppGroup|onSuccess, jsonStr"+jsonStr);
+                                boolean success = false;
+                                if (jsonStr!=null) {
+                                    Result result = ResultUtils.getResultFromJson(jsonStr, Group.class);
+                                    if (result != null && result.isRetMsg()) {
+                                        Group group = (Group) result.getRetData();
+                                        L.e(TAG, "createAppGroup, group = "+group);
+                                        if (group!=null) {
+                                            success =true;
+                                        }
+                                    }
+                                }
+                                createSuccess(success);
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                createSuccess(false);
+                            }
+                        });
+            }
+        }
+    }
+
+    private void createSuccess(final boolean isSuccess) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                progressDialog.dismiss();
+                if (isSuccess) {
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    Toast.makeText(NewGroupActivity.this, R.string.Failed_to_create_groups, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void showDialog() {
+        String st1 = getResources().getString(R.string.Is_to_create_a_group_chat);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(st1);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+    }
+
+    private void uploadHeadPhoto() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dl_title_upload_photo);
+        builder.setItems(new String[]{getString(R.string.dl_msg_take_photo), getString(R.string.dl_msg_local_upload)},
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                Toast.makeText(NewGroupActivity.this, getString(R.string.toast_no_support),
+                                        Toast.LENGTH_SHORT).show();
+                                break;
+                            case 1:// 上传本地图片
+                                Intent pickIntent = new Intent(Intent.ACTION_PICK, null);
+                                pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                                startActivityForResult(pickIntent, REQUESTCODE_PICK);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
+    }
+
+    /**
+     * save the picture data
+     * 保存上传并截取的照片
+     * @param picdata
+     */
+    private File getGroupFile(Intent picdata) {
+        L.e(TAG, "setPicToView, picdata = "+picdata);
+        Bundle extras = picdata.getExtras();
+        L.e(TAG, "setPicToView, extras = "+extras);
+        if (extras != null) {
+            Bitmap bitmap = extras.getParcelable("data");
+            L.e(TAG, "setPicToView, bitmap = "+bitmap);
+            Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+
+            return saveBitmapFile(bitmap);
+        }
+        return null;
+    }
+
+
+    public void startPhotoZoom(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", true);
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 300);
+        intent.putExtra("outputY", 300);
+        intent.putExtra("return-data", true);
+        intent.putExtra("noFaceDetection", true);
+        startActivityForResult(intent, REQUESTCODE_CUTTING);
+    }
+
+    /**
+     * 获取头像文件的名字
+     *
+     * @return
+     */
+    private String getAvatarName() {
+//        avatarName = group.getGroupName() + System.currentTimeMillis();
+//        L.e(TAG, "avatarName = " + avatarName);
+//        return avatarName;
+        return null;// 待修改
+    }
+    /**
+     * 返回头像保存在sd卡的位置:
+     * Android/data/cn.ucai.superwechat/files/pictures/user_avatar
+     *
+     * @param context
+     * @param path
+     * @return
+     */
+    public static String getAvatarPath(Context context, String path) {
+        File dir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File folder = new File(dir, path);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+        return folder.getAbsolutePath();
+    }
+    /**
+     * 将bitmap转换或file文件
+     *
+     * @param bitmap
+     * @return
+     */
+    private File saveBitmapFile(Bitmap bitmap) {
+        if (bitmap != null) {
+            String imagePath = getAvatarPath(NewGroupActivity.this, I.AVATAR_TYPE_USER_PATH) +
+                    "/" + getAvatarName() + ".jpg";
+            File file = new File(imagePath); // 将要保存图片的途径
+            L.e(TAG, "file = " + file.getAbsolutePath());
+            try {
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                bos.flush();
+                bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return file;
+        }
+        return null;
+    }
 
 }
