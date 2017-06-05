@@ -194,7 +194,7 @@ public class NewGroupActivity extends BaseActivity {
 
                     EMGroup emGroup = EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
 
-                    createAppGroup(emGroup);
+                    createAppGroup(emGroup, members);
 
                 } catch (final HyphenateException e) {
                     runOnUiThread(new Runnable() {
@@ -209,7 +209,7 @@ public class NewGroupActivity extends BaseActivity {
         }).start();
     }
 
-    private void createAppGroup(EMGroup emGroup) {
+    private void createAppGroup(EMGroup emGroup, final String[] members) {
         if(emGroup!=null){
             if (emGroup.getGroupId() != null) {
                 model.newGroup(NewGroupActivity.this, emGroup.getGroupId(), emGroup.getGroupName(),
@@ -225,13 +225,18 @@ public class NewGroupActivity extends BaseActivity {
                                         Group group = (Group) result.getRetData();
                                         L.e(TAG, "createAppGroup, group = "+group);
                                         if (group!=null) {
-                                            success =true;
+                                            if (members.length > 0) {
+                                                addMembers(group.getMGroupHxid(), getStringFromMembers(members));
+                                            } else {
+                                                success =true;
+                                            }
                                         }
                                     }
                                 }
-                                createSuccess(success);
+                                if (members.length<=0) {
+                                    createSuccess(success);
+                                }
                             }
-
                             @Override
                             public void onError(String error) {
                                 createSuccess(false);
@@ -239,6 +244,36 @@ public class NewGroupActivity extends BaseActivity {
                         });
             }
         }
+    }
+
+    private void addMembers(String hxid, String members) {
+        L.e(TAG, "addMembers, hxid = "+hxid+", members = "+members);
+        model.addMembers(NewGroupActivity.this, hxid, members, new OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String jsonStr) {
+                boolean success = false;
+                if (jsonStr != null) {
+                    Result result = ResultUtils.getResultFromJson(jsonStr, Group.class);
+                    if (result.isRetMsg() && result != null) {
+                        success =true;
+                    }
+                }
+                createSuccess(success);
+            }
+            @Override
+            public void onError(String error) {
+                L.e(TAG, "addMembers|onError, error = "+error);
+                createSuccess(false);
+            }
+        });
+    }
+
+    private String getStringFromMembers(String[] members) {
+        StringBuffer buffer = new StringBuffer();
+        for (String member :members) {
+            buffer.append(member).append(",");
+        }
+        return buffer.toString();
     }
 
     private void createSuccess(final boolean isSuccess) {

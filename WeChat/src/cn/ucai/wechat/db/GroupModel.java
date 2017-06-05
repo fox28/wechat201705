@@ -28,4 +28,15 @@ public class GroupModel implements IGroupModel {
                 .post()
                 .execute(listener);
     }
+
+    @Override
+    public void addMembers(Context context, String hxid, String username, OnCompleteListener<String> listener) {
+        // http://101.251.196.90:8080/SuperWeChatServerV2.0/addGroupMembers?m_member_user_name=mm01&m_member_group_hxid=18078719082497
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.REQUEST_ADD_GROUP_MEMBERS)
+                .addParam(I.Member.GROUP_HX_ID,hxid)
+                .addParam(I.Member.USER_NAME,username)
+                .targetClass(String.class)
+                .execute(listener);
+    }
 }
