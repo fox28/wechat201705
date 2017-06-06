@@ -45,6 +45,7 @@ import com.hyphenate.easeui.widget.EaseAlertDialog;
 import com.hyphenate.easeui.widget.EaseAlertDialog.AlertDialogUser;
 import com.hyphenate.easeui.widget.EaseExpandGridView;
 import com.hyphenate.easeui.widget.EaseSwitchButton;
+import com.hyphenate.easeui.widget.EaseTitleBar;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
 
@@ -69,6 +70,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 	private GridAdapter membersAdapter;
 	private OwnerAdminAdapter ownerAdminAdapter;
 	private ProgressDialog progressDialog;
+    private EaseTitleBar titleBar;
 
 	public static GroupDetailsActivity instance;
 
@@ -105,7 +107,11 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 
 		instance = this;
 		st = getResources().getString(R.string.people);
-		RelativeLayout clearAllHistory = (RelativeLayout) findViewById(R.id.clear_all_history);
+
+        titleBar = (EaseTitleBar) findViewById(R.id.title_bar);
+        initBackListener();
+
+        RelativeLayout clearAllHistory = (RelativeLayout) findViewById(R.id.clear_all_history);
 		loadingPB = (ProgressBar) findViewById(R.id.progressBar);
 		exitBtn = (Button) findViewById(R.id.btn_exit_grp);
 		deleteBtn = (Button) findViewById(R.id.btn_exitdel_grp);
@@ -141,8 +147,9 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 
 		groupChangeListener = new GroupChangeListener();
 		EMClient.getInstance().groupManager().addGroupChangeListener(groupChangeListener);
-		
-		((TextView) findViewById(R.id.group_name)).setText(group.getGroupName() + "(" + group.getMemberCount() + st);
+
+        titleBar.setTitle(group.getGroupName() + "(" + group.getMemberCount() + st);
+//		((TextView) findViewById(R.id.group_name)).setText(group.getGroupName() + "(" + group.getMemberCount() + st);
 
 		membersAdapter = new GridAdapter(this, R.layout.em_grid_owner, new ArrayList<String>());
 		EaseExpandGridView userGridview = (EaseExpandGridView) findViewById(R.id.gridview);
@@ -282,7 +289,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 								EMClient.getInstance().groupManager().changeGroupName(groupId, returnData);
 								runOnUiThread(new Runnable() {
 									public void run() {
-										((TextView) findViewById(R.id.group_name)).setText(group.getGroupName() + "(" + group.getMemberCount() + ")");
+                                        titleBar.setTitle(group.getGroupName() + "(" + group.getMemberCount() + ")");
+//										((TextView) findViewById(R.id.group_name)).setText(group.getGroupName() + "(" + group.getMemberCount() + ")");
 										progressDialog.dismiss();
 										Toast.makeText(getApplicationContext(), st6, Toast.LENGTH_SHORT).show();
 									}
@@ -504,8 +512,9 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					refreshMembersAdapter();
 					runOnUiThread(new Runnable() {
 						public void run() {
-							((TextView) findViewById(R.id.group_name)).setText(group.getGroupName() + "(" + group.getMemberCount()
-									+ st);
+                            titleBar.setTitle(group.getGroupName() + "(" + group.getMemberCount() + st);
+//							((TextView) findViewById(R.id.group_name)).setText(group.getGroupName() + "(" + group.getMemberCount()
+//									+ st);
 							progressDialog.dismiss();
 						}
 					});
@@ -1046,8 +1055,9 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 							refreshMembersAdapter();
 
 //							refreshUIVisibility();
-							((TextView) findViewById(R.id.group_name)).setText(group.getGroupName() + "(" + group.getMemberCount()
-									+ ")");
+                            titleBar.setTitle(group.getGroupName() + "(" + group.getMemberCount() + ")");
+//							((TextView) findViewById(R.id.group_name)).setText(group.getGroupName() + "(" + group.getMemberCount()
+//									+ ")");
 							loadingPB.setVisibility(View.INVISIBLE);
 
 							if (EMClient.getInstance().getCurrentUser().equals(group.getOwner())) {
@@ -1096,9 +1106,14 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 
 	}
 
-	public void back(View view) {
-		setResult(RESULT_OK);
-		finish();
+	private void initBackListener() {
+        titleBar.setLeftLayoutClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
 	}
 
 	@Override
