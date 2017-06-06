@@ -244,6 +244,7 @@ public class UserProfileManager {
 
 	public void updateCurrentAppUserInfo(User user) {
 		currentAppUser = user;
+		L.e(TAG, "updateCurrentAppUserInfo, currentAppUser = "+currentAppUser);
 		// 将user.getAvatar()保存到内存 SharePreference中
 		setCurrentAppUserNick(user.getMUserNick());
 		setCurrentAppUserAvatar(user.getAvatar());
