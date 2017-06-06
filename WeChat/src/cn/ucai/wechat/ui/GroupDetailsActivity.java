@@ -823,8 +823,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			final String username = getItem(position);
 			convertView.setVisibility(View.VISIBLE);
 			button.setVisibility(View.VISIBLE);
-			EaseUserUtils.setUserNick(username, holder.textView);
-			EaseUserUtils.setUserAvatar(getContext(), username, holder.imageView);
+			EaseUserUtils.setAppUserNick(username, holder.textView);
+			EaseUserUtils.setAppUserAvatar(getContext(), username, holder.imageView);
 
 			LinearLayout id_background = (LinearLayout) convertView.findViewById(R.id.l_bg_id);
 			id_background.setBackgroundColor(convertView.getResources().getColor(
@@ -899,7 +899,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			final LinearLayout button = (LinearLayout) convertView.findViewById(R.id.button_avatar);
 
 			// add button
-			if (position == getCount() - 1) {
+			if (position == getCount() - 1) {// 如果是最后一项，设置图片为"+"
 				holder.textView.setText("");
 				holder.imageView.setImageResource(R.drawable.em_smiley_add_btn);
 				if (isCanAddMember(group)) {
@@ -922,8 +922,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			} else {
 				// members
 				final String username = getItem(position);
-				EaseUserUtils.setUserNick(username, holder.textView);
-				EaseUserUtils.setUserAvatar(getContext(), username, holder.imageView);
+				EaseUserUtils.setAppUserNick(username, holder.textView);
+				EaseUserUtils.setAppUserAvatar(getContext(), username, holder.imageView);
 
 				LinearLayout id_background = (LinearLayout) convertView.findViewById(R.id.l_bg_id);
 				if (isInMuteList(username)) {
