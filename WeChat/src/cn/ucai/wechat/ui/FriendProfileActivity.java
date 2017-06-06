@@ -169,6 +169,9 @@ public class FriendProfileActivity extends BaseActivity {
                             } else if (isFriend) {
                                 // update user
                                 WeChatHelper.getInstance().saveAppContact(u);
+                                if (u.getMUserName().equals(EMClient.getInstance().getCurrentUser())) {
+                                    WeChatHelper.getInstance().getUserProfileManager().updateCurrentAppUserInfo(u);
+                                }
                             }
                             user = u;
                             showFriendUserInfo();

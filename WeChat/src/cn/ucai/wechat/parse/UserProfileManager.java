@@ -240,8 +240,16 @@ public class UserProfileManager {
 
 			}
 		});
-
 	}
+
+	public void updateCurrentAppUserInfo(User user) {
+		currentAppUser = user;
+		// 将user.getAvatar()保存到内存 SharePreference中
+		setCurrentAppUserNick(user.getMUserNick());
+		setCurrentAppUserAvatar(user.getAvatar());
+		WeChatHelper.getInstance().saveAppContact(user);
+	}
+
 	public void asyncGetCurrentAppUserInfo(){
 		userModel.loadUserInfo(appContext, EMClient.getInstance().getCurrentUser(),
 				new OnCompleteListener<String>() {
@@ -253,11 +261,14 @@ public class UserProfileManager {
 					if (result != null &&result.isRetMsg()) {
 						User user = (User) result.getRetData();
 //						L.e(TAG, "asyncGetCurrentAppUserInfo, user = "+user);
-
-						// 将user.getAvatar()保存到内存 SharePreference中
-						setCurrentAppUserNick(user.getMUserNick());
-						setCurrentAppUserAvatar(user.getAvatar());
-                        WeChatHelper.getInstance().saveAppContact(user);
+						if (user!=null) {
+							updateCurrentAppUserInfo(user);
+//							currentAppUser = user;
+//							// 将user.getAvatar()保存到内存 SharePreference中
+//							setCurrentAppUserNick(user.getMUserNick());
+//							setCurrentAppUserAvatar(user.getAvatar());
+//							WeChatHelper.getInstance().saveAppContact(user);
+						}
 
 					}
 				}
